@@ -6,9 +6,14 @@ class MainTank():
     def __init__(self, screen):
         self.screen = screen
         self.image = pygame.image.load('Images/Main_Tank.png')
+        self.image = pygame.transform.scale(self.image, (85, 85))
         self.rect = self.image.get_rect()
+        print(self.rect)
         self.screen_rect = screen.get_rect()
         self.rect.centerx = self.screen_rect.centerx
+        self.rect.centery = self.screen_rect.centery
+        self.r_center_x = float(self.rect.centerx) #Floating, для плавности движений
+        self.r_center_y = float(self.rect.centery)
         self.rect.center = self.screen_rect.center
         self.mright = False
         self.mleft = False
@@ -23,24 +28,27 @@ class MainTank():
 
     def update_tank(self):
         """Обновляем позицию танка"""
-        goRight = pygame.image.load('Images/Main_Tank_Right.png')
-        goUp = pygame.image.load('Images/Main_Tank.png')
-        goLeft = pygame.image.load('Images/Main_Tank_Left.png')
-        goDown = pygame.image.load('Images/Main_Tank_Down.png')
+        Right_t = pygame.image.load('Images/Main_Tank_Right.png')
+        goRight = pygame.transform.scale(Right_t, (85, 85))
+        Up_t = pygame.image.load('Images/Main_Tank.png')
+        goUp = pygame.transform.scale(Up_t, (85, 85))
+        Left_t = pygame.image.load('Images/Main_Tank_Left.png')
+        goLeft = pygame.transform.scale(Left_t, (85, 85))
+        Down_t = pygame.image.load('Images/Main_Tank_Down.png')
+        goDown = pygame.transform.scale(Down_t, (85, 85))
 
         if self.mright == True and self.rect.right < self.screen_rect.right:
             self.image = goRight
-            #self.rect = self.image.get_rect()
-            self.rect.centerx += 1
+            self.r_center_x += 5
         elif self.mleft and self.rect.left > 0:
             self.image = goLeft
-            #self.rect = self.image.get_rect()
-            self.rect.centerx -= 1
+            self.r_center_x -= 5
         elif self.mtop and self.rect.top > 0:
             self.image = goUp
-            #self.rect = self.image.get_rect()
-            self.rect.centery -= 1
+            self.r_center_y -= 5
         elif self.mbottom and self.rect.bottom < self.screen_rect.bottom:
             self.image = goDown
-            #self.rect = self.image.get_rect()
-            self.rect.centery += 1
+            self.r_center_y += 5
+
+        self.rect.centerx = self.r_center_x
+        self.rect.centery = self.r_center_y
