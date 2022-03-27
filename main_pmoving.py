@@ -10,31 +10,31 @@ def events (screen, tank, bullets):
             #Вправо
             if event.key == pygame.K_d:
                tank.mright = True
-               tank.mleft = False
+               tank.LastMove = "Right"
                tank.mtop = False
                tank.mbottom = False
-               tank.LastMove = "Right"
+               tank.mleft = False
             #Влево
             elif event.key == pygame.K_a:
-               tank.mleft = False
                tank.mleft = True
+               tank.LastMove = "Left"
                tank.mtop = False
                tank.mbottom = False
-               tank.LastMove = "Left"
+               tank.mright = False
             #Вверх
             elif event.key == pygame.K_w:
-                tank.mtop = False
-                tank.mleft = False
                 tank.mtop = True
-                tank.mbottom = False
                 tank.LastMove = "Up"
+                tank.mleft = False
+                tank.mbottom = False
+                tank.mright = False
             #Вниз
             elif event.key == pygame.K_s:
-                tank.mbottom = False
-                tank.mleft = False
-                tank.mtop = False
                 tank.mbottom = True
                 tank.LastMove = "Down"
+                tank.mtop = False
+                tank.mleft = False
+                tank.mright = False
             #Выстрел
             elif event.key == pygame.K_SPACE:
                 # Каждый раз при нажатии пробел - создается пуля и добавляется в контейнер bullets
@@ -69,6 +69,6 @@ def update(bg_color, screen, tank, bullets):
     """Обновление экрана игры"""
     screen.fill(bg_color)
     for bullet in bullets.sprites():
-        bullet.draw_bullet(tank)
+        bullet.draw_bullet()
     tank.own_tank_draw()
     pygame.display.flip()

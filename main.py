@@ -12,7 +12,6 @@ def run():
     bg_color = (25,25,25)
     tank = MainTank(screen)
     bullets = Group()
-    clock = pygame.time.Clock()
 
 
 
