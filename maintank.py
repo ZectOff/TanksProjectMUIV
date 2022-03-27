@@ -19,6 +19,7 @@ class MainTank():
         self.mleft = False
         self.mtop = False
         self.mbottom = False
+        LastMove = "Up"
 
 
 
