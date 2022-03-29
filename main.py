@@ -13,15 +13,17 @@ def run():
     bg_color = (25,25,25)
     tank = MainTank(screen)
     bullets = Group()
-    enemy = Enemy(screen)
+    enemy1 = Enemy(screen)
+    enemy2 = Enemy(screen)
 
     while True:
         delta_ms = clock.tick(60)
         main_pmoving.events(screen, tank, bullets)
         tank.update_tank(delta_ms)
-        enemy.update_enemy(delta_ms)
+        enemy1.update_enemy(delta_ms)
+        enemy2.update_enemy(delta_ms)
         bullets.update()
-        main_pmoving.update(bg_color, screen, tank, bullets, enemy)
+        main_pmoving.update(bg_color, screen, tank, bullets, enemy1, enemy2)
 
 
 if __name__ == "__main__":

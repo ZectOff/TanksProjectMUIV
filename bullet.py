@@ -11,16 +11,20 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load('Images/Bullet_up.png')
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
-        self.speed = 8
         self.rect.centerx = tank.rect.centerx
         self.rect.centery = tank.rect.centery
         self.rect.center = tank.rect.center
         self.y = float(self.rect.centery)
         self.x = float(self.rect.centerx)
+        self.speed = 8
         self.btUp = False  # bt - BulletTurn
         self.btRight = False
         self.btLeft = False
         self.btDown = False
+
+    def draw_bullet(self):
+        """Отрисовка пули на экране"""
+        self.screen.blit(self.image, (self.rect.centerx - 17.5, self.rect.centery - 17.5))
 
     def update(self):
         """Перемещение пули"""
@@ -60,10 +64,6 @@ class Bullet(pygame.sprite.Sprite):
 
         self.rect.y = self.y
         self.rect.x = self.x # Из-за отрисовки по х, расположение пули сдвигается
-
-    def draw_bullet(self):
-        """Отрисовка пули на экране"""
-        self.screen.blit(self.image, (self.rect.centerx - 30, self.rect.centery - 30)) # Тут нужно как-то переопределить параметр, чтобы в центре танка спавнилась пуля
 
 
 
