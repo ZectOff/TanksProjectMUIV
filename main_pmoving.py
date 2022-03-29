@@ -65,10 +65,11 @@ def events (screen, tank, bullets):
             elif event.key == pygame.K_s:
                 tank.mbottom = False
 
-def update(bg_color, screen, tank, bullets):
+def update(bg_color, screen, tank, bullets, enemy):
     """Обновление экрана игры"""
     screen.fill(bg_color)
     for bullet in bullets.sprites():
         bullet.draw_bullet()
     tank.own_tank_draw()
+    enemy.draw_enemy()
     pygame.display.flip()
