@@ -12,14 +12,15 @@ up_e = pygame.transform.scale(E_Up, (85, 85))
 E_Down = pygame.image.load('Images/EnemyTank_Down.png')
 down_e = pygame.transform.scale(E_Down, (85, 85))
 
-class Enemy():
+class Enemy(pygame.sprite.Sprite):
     def __init__(self, screen):
+        super(Enemy, self).__init__()
         self.screen = screen
         self.image = pygame.image.load("Images/EnemyTank_Up.png")
         self.image = pygame.transform.scale(self.image, (85, 85))
         self.screen_rect = screen.get_rect()
         self.rect = self.image.get_rect()
-        self.rect.center = (150, 150)
+        self.rect.center = (rd.randint(100, 1500), rd.randint(100, 800))
         self.rect_x = float(self.rect.centerx)
         self.rect_y = float(self.rect.centery)
         self.next_turn = 0
@@ -28,12 +29,12 @@ class Enemy():
     def draw_enemy(self):
         self.screen.blit(self.image, self.rect)
 
-    def update_enemy(self, delta_ms):
+    def update(self, delta_ms):
+        """Перемещение врагов"""
         ticks = pygame.time.get_ticks()
         if ticks > self.next_turn:
             self.turn = rd.choice(("Up", "Down", "Left", "Right"))
             self.next_turn += 1000
-            print(self.turn)
 
         if self.turn == "Right":
             self.image = right_e
@@ -63,8 +64,3 @@ class Enemy():
 
         self.rect.centerx = self.rect_x
         self.rect.centery = self.rect_y
-
-
-
-
-

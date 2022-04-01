@@ -1,8 +1,6 @@
 import pygame, main_pmoving
 from maintank import MainTank
 from pygame.sprite import Group
-from enemy import Enemy
-
 
 
 def run():
@@ -13,18 +11,17 @@ def run():
     bg_color = (25,25,25)
     tank = MainTank(screen)
     bullets = Group()
-    enemy1 = Enemy(screen)
-    enemy2 = Enemy(screen)
+    enemies = Group()
+
 
     while True:
         delta_ms = clock.tick(60)
         main_pmoving.events(screen, tank, bullets)
         tank.update_tank(delta_ms)
-        enemy1.update_enemy(delta_ms)
-        enemy2.update_enemy(delta_ms)
         bullets.update()
-        main_pmoving.update(bg_color, screen, tank, bullets, enemy1, enemy2)
-
+        enemies.update(delta_ms)
+        main_pmoving.update(bg_color, screen, tank, bullets, enemies)
+        main_pmoving.create_enemies(screen, enemies)
 
 if __name__ == "__main__":
     run()

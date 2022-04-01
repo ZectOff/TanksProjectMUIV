@@ -1,6 +1,17 @@
 import pygame
 
 
+pygame.init()
+b_Up = pygame.image.load('Images/Bullet_up.png')
+UpBull = pygame.transform.scale(b_Up, (30, 30))
+b_Right = pygame.image.load('Images/Bullet_right.png')
+RightBull = pygame.transform.scale(b_Right, (30, 30))
+b_Left = pygame.image.load('Images/Bullet_left.png')
+LeftBull = pygame.transform.scale(b_Left, (30, 30))
+b_Down = pygame.image.load('Images/Bullet_down.png')
+DownBull = pygame.transform.scale(b_Down, (30, 30))
+
+
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, screen, tank):
@@ -28,15 +39,6 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """Перемещение пули"""
-        b_Up = pygame.image.load('Images/Bullet_up.png')
-        UpBull = pygame.transform.scale(b_Up, (30, 30))
-        b_Right = pygame.image.load('Images/Bullet_right.png')
-        RightBull = pygame.transform.scale(b_Right, (30, 30))
-        b_Left = pygame.image.load('Images/Bullet_left.png')
-        LeftBull = pygame.transform.scale(b_Left, (30, 30))
-        b_Down = pygame.image.load('Images/Bullet_down.png')
-        DownBull = pygame.transform.scale(b_Down, (30, 30))
-
         #Пуля летит вниз
         if self.btDown == True:
             self.image = DownBull
@@ -47,7 +49,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.btUp == True:
             self.image = UpBull
             self.y -= self.speed
-            if self.rect.top < 0:
+            if self.rect.top <= self.screen_rect.top:
                 self.kill()
         # Пуля летит вправо
         if self.btRight == True:
@@ -64,6 +66,3 @@ class Bullet(pygame.sprite.Sprite):
 
         self.rect.y = self.y
         self.rect.x = self.x # Из-за отрисовки по х, расположение пули сдвигается
-
-
-

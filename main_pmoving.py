@@ -1,5 +1,8 @@
 import  pygame, sys
 from bullet import Bullet
+from enemy import Enemy
+
+
 
 def events (screen, tank, bullets):
     """Обработка события"""
@@ -47,7 +50,6 @@ def events (screen, tank, bullets):
                     new_bullet.btRight = True
                 elif tank.mleft == True or tank.LastMove == "Left":
                     new_bullet.btLeft = True
-                # Зададим переменную ласт мув, и мб посмотреть насчет фейсинг.
 
                 bullets.add(new_bullet)
 
@@ -65,12 +67,21 @@ def events (screen, tank, bullets):
             elif event.key == pygame.K_s:
                 tank.mbottom = False
 
-def update(bg_color, screen, tank, bullets, enemy1, enemy2):
+def update(bg_color, screen, tank, bullets, enemies):
     """Обновление экрана игры"""
     screen.fill(bg_color)
     for bullet in bullets.sprites():
         bullet.draw_bullet()
     tank.own_tank_draw()
-    enemy1.draw_enemy()
-    enemy2.draw_enemy()
+    for enem in enemies.sprites():
+        enem.draw_enemy()
     pygame.display.flip()
+
+def create_enemies(screen, enemies):
+    """Создание нескольких врагов"""
+    for enemy_number in range(1):
+        enemy = Enemy(screen)
+        if len(enemies) < 5:
+            enemies.add(enemy)
+        else:
+            enemies.remove(enemy)
