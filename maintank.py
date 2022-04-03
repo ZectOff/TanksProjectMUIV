@@ -54,3 +54,8 @@ class MainTank():
 
         self.rect.centerx = self.r_center_x
         self.rect.centery = self.r_center_y
+
+    def create_tank(self):
+        """Размещение танка игрока по центру"""
+        self.rect.centerx = self.screen_rect.centerx
+        self.rect.centery = self.screen_rect.centery

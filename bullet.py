@@ -27,7 +27,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.center = tank.rect.center
         self.y = float(self.rect.centery)
         self.x = float(self.rect.centerx)
-        self.speed = 8
+        self.speed = 12
         self.btUp = False  # bt - BulletTurn
         self.btRight = False
         self.btLeft = False

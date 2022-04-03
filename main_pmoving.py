@@ -1,3 +1,4 @@
+import time
 import  pygame, sys
 from bullet import Bullet
 from enemy import Enemy
@@ -73,15 +74,47 @@ def update(bg_color, screen, tank, bullets, enemies):
     for bullet in bullets.sprites():
         bullet.draw_bullet()
     tank.own_tank_draw()
-    for enem in enemies.sprites():
-        enem.draw_enemy()
+    for enemy in enemies.sprites():
+        enemy.draw_enemy()
     pygame.display.flip()
+
+def bullets_update(bullets, enemies, stats):
+    bullets.update()
+    if pygame.sprite.groupcollide(bullets, enemies, True, True):
+        stats.killed_enemies += 1
+        print(str(stats.killed_enemies) + " Врагов убито.")
+
+def update_enemies(enemies, delta_ms, tank, stats, screen, bullets):
+    """Обновление врагов"""
+    enemies.update(delta_ms)
+    if pygame.sprite.spritecollideany(tank, enemies):
+        if stats.tank_lifes == 1:
+            tank_die(stats, screen, tank, enemies, bullets)
+        elif stats.tank_lifes != 0:
+            print('Вы потеряли одну жизнь!')
+            tank_die(stats, screen, tank, enemies, bullets)
+
+def tank_die(stats, screen, tank, enemies, bullets):
+    """Столкновение врагов с игроком"""
+    stats.tank_lifes -= 1
+    if stats.tank_lifes == 0:
+        print('Вы проиграли, потеряв все жизни!')
+        sys.exit()
+    else:
+        print(str(stats.tank_lifes) + " Жизней осталось.")
+        enemies.empty()
+        bullets.empty()
+        create_enemies(screen, enemies)
+        time.sleep(2)
+        tank.create_tank()
 
 def create_enemies(screen, enemies):
     """Создание нескольких врагов"""
-    for enemy_number in range(1):
+    for enemy_number in range(5):
         enemy = Enemy(screen)
         if len(enemies) < 5:
             enemies.add(enemy)
+        # elif len(enemies) == 0:
+            # print("Вы победили! =)")
         else:
             enemies.remove(enemy)

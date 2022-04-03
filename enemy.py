@@ -20,7 +20,7 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (85, 85))
         self.screen_rect = screen.get_rect()
         self.rect = self.image.get_rect()
-        self.rect.center = (rd.randint(100, 1500), rd.randint(100, 800))
+        self.rect.center = (rd.randint(100, 1500), rd.randint(85, 250))
         self.rect_x = float(self.rect.centerx)
         self.rect_y = float(self.rect.centery)
         self.next_turn = 0
@@ -32,7 +32,10 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, delta_ms):
         """Перемещение врагов"""
         ticks = pygame.time.get_ticks()
+        ticks_of_next_turn = ticks - self.next_turn
         if ticks > self.next_turn:
+            if ticks_of_next_turn > 1000:
+                self.next_turn = ticks - 1000
             self.turn = rd.choice(("Up", "Down", "Left", "Right"))
             self.next_turn += 1000
 
