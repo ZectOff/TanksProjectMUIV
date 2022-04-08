@@ -3,6 +3,8 @@ from constants import WEIGHT, HEIGHT, FPS, BLACK
 from scene_run import scene_manager
 from menu import Menu
 
+main_menu_image = pygame.image.load('images/Menu.jpg')
+
 
 def run(screen, clock):
     scene_manager.running = True
@@ -29,8 +31,8 @@ def run(screen, clock):
                     menu.select()
         # Обновление
         # Визуализация, редеринг (сборка)
-        screen.fill(BLACK)
-        # screen.blit(main_menu_image, (0, 0))
+        # screen.fill(BLACK)
+        screen.blit(main_menu_image, (0, 0))
 
         menu.draw(screen, WEIGHT//2 - 100, HEIGHT//2, 75)
         # Flip, после отрисовки всего переворачиваем экран
