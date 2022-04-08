@@ -10,7 +10,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 # Шрифт
-ARIAL_50 = pygame.font.SysFont('arial', 50)
+ARIAL_50 = pygame.font.SysFont('CLOUD SANS', 50)
 
 
 class Menu:
@@ -34,6 +34,6 @@ class Menu:
             option_rect = option.get_rect()
             option_rect.topleft = (x, y + i * option_y_padding)
             if i == self._current_option_index:
-                pygame.draw.rect(surf, (0, 100, 0), option_rect)
+                pygame.draw.rect(surf, (100, 0, 0), option_rect)
             surf.blit(option, option_rect)
 
