@@ -17,7 +17,6 @@ class MainTank():
         self.image = pygame.image.load('Images/MainTank_Up.png')
         self.image = pygame.transform.scale(self.image, (85, 85))
         self.rect = self.image.get_rect()
-        print(self.rect)
         self.screen_rect = screen.get_rect()
         self.rect.centerx = self.screen_rect.centerx
         self.rect.centery = self.screen_rect.centery
@@ -28,9 +27,7 @@ class MainTank():
         self.mleft = False
         self.mtop = False
         self.mbottom = False
-        LastMove = "Up"
-
-
+        self.LastMove = "Up"
 
     def own_tank_draw(self):
         """Отрисовывавем сам танк"""
@@ -57,5 +54,5 @@ class MainTank():
 
     def create_tank(self):
         """Размещение танка игрока по центру"""
-        self.rect.centerx = self.screen_rect.centerx
-        self.rect.centery = self.screen_rect.centery
+        self.rect.center = self.screen_rect.center
+        print("Встал по центру")
