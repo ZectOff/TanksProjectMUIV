@@ -1,7 +1,11 @@
 import pygame
+from main import screen
 
 pygame.init()
-
+btn_swap = pygame.mixer.Sound('Sounds/swap_button.wav')
+btn_pressed = pygame.mixer.Sound('Sounds/pressed_button.wav')
+btn_font = pygame.font.SysFont('CLOUD SANS', 50)
+prsd_btn_font = pygame.font.SysFont('CLOUD SANS', 50, 'bold')
 # Цвета (R, G, B)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -10,7 +14,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 # Шрифт
-ARIAL_50 = pygame.font.SysFont('CLOUD SANS', 50)
+ARIAL_50 = pygame.font.SysFont('CLOUD SANS', 50, 1)
 
 
 class Menu:
@@ -34,6 +38,63 @@ class Menu:
             option_rect = option.get_rect()
             option_rect.topleft = (x, y + i * option_y_padding)
             if i == self._current_option_index:
-                pygame.draw.rect(surf, (100, 0, 0), option_rect)
+                pygame.draw.rect(surf, (156, 11, 11), option_rect)
             surf.blit(option, option_rect)
+
+
+def print_text(message, x, y, font_color, font_type, font_bold, font_size = 30):
+    font_type = pygame.font.SysFont(font_type, font_size, font_bold)
+    text = font_type.render(message, True, font_color)
+    screen.blit(text, (x, y))
+
+
+
+class Button:
+    def __init__(self, width, height, inactive_color, active_color):
+        self.width = width
+        self.height = height
+        self.inactive_clr = inactive_color
+        self.active_clr = active_color
+
+    def draw(self, x, y, message, action=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        if x < mouse[0] < x + self.width: # курсор на кнопке
+            if y < mouse[1] < y + self.height:
+                pygame.draw.rect(screen, (255, 0, 0), (x, y, self.width, self.height))
+                pygame.mixer.Sound.play(btn_swap)
+                pygame.time.delay(300) # задержка звука
+
+                if click[0] == 1:
+                    pygame.mixer.Sound.play(btn_pressed)
+                    pygame.time.delay(300)
+                    if action is not None:
+                        action()
+
+        else: # курсор не на кнопке
+            pygame.draw.rect(screen, (156, 11, 11), (x, y, self.width, self.height))
+
+# доделать изменение жирность при наводки мышки на текст , так же доделать
+# функцию кнопки и реализовать меню до конца
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
