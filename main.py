@@ -1,8 +1,8 @@
 import pygame
-
 from constants import WEIGHT, HEIGHT
 from scene_run.menu_run import run
 import scene_run.game_run
+
 
 pygame.init()
 clock = pygame.time.Clock()

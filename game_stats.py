@@ -10,3 +10,4 @@ class Game_stats():
         """Статистика изменяющаяся во время игры"""
         self.tank_lifes = 3
         self.killed_enemies = 0
+        self.briks_lifes = 1

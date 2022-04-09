@@ -10,9 +10,11 @@ goLeft = pygame.transform.scale(Left_t, (85, 85))
 Down_t = pygame.image.load('Images/MainTank_Down.png')
 goDown = pygame.transform.scale(Down_t, (85, 85))
 
-class MainTank():
+class MainTank(pygame.sprite.Sprite):
     """Инициализируем Танк основного игрока"""
     def __init__(self, screen):
+        super(MainTank, self).__init__()
+        all_sprites.add(self)
         self.screen = screen
         self.image = pygame.image.load('Images/MainTank_Up.png')
         self.image = pygame.transform.scale(self.image, (85, 85))
@@ -31,23 +33,24 @@ class MainTank():
 
     def own_tank_draw(self):
         """Отрисовывавем сам танк"""
-        self.screen.blit(self.image, (self.rect.centerx - 30, self.rect.centery -30))
+        self.screen.blit(self.image, (self.rect.centerx - 30, self.rect.centery - 30))
 
     def update_tank(self, delta_ms):
         """Обновляем позицию танка"""
+        self.speed = 250 * delta_ms / 1000
 
         if self.mright == True and self.rect.right < self.screen_rect.right:
             self.image = goRight
-            self.r_center_x += 250 * delta_ms / 1000
+            self.r_center_x += self.speed
         elif self.mleft and self.rect.left > 0:
             self.image = goLeft
-            self.r_center_x -= 250 * delta_ms / 1000
+            self.r_center_x -= self.speed
         elif self.mtop and self.rect.top > 0:
             self.image = goUp
-            self.r_center_y -= 250 * delta_ms / 1000
+            self.r_center_y -= self.speed
         elif self.mbottom and self.rect.bottom < self.screen_rect.bottom:
             self.image = goDown
-            self.r_center_y += 250 * delta_ms / 1000
+            self.r_center_y += self.speed
 
         self.rect.centerx = self.r_center_x
         self.rect.centery = self.r_center_y

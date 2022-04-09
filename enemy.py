@@ -31,6 +31,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, delta_ms):
         """Перемещение врагов"""
+        self.speed = 250 * delta_ms / 1000
         ticks = pygame.time.get_ticks()
         ticks_of_next_turn = ticks - self.next_turn
         if ticks > self.next_turn:
@@ -42,25 +43,25 @@ class Enemy(pygame.sprite.Sprite):
         if self.turn == "Right":
             self.image = right_e
             if self.rect.right < self.screen_rect.right:
-                self.rect_x += 250 * delta_ms / 1000
+                self.rect_x += self.speed
             else:
                 self.next_turn = ticks
         if self.turn == "Down":
             self.image = down_e
             if self.rect.bottom < self.screen_rect.bottom:
-                self.rect_y += 250 * delta_ms / 1000
+                self.rect_y += self.speed
             else:
                 self.next_turn = ticks
         elif self.turn == "Left":
             self.image = left_e
             if self.rect.left > self.screen_rect.left:
-                self.rect_x -= 250 * delta_ms / 1000
+                self.rect_x -= self.speed
             else:
                 self.next_turn = ticks
         elif self.turn == "Up":
             self.image = up_e
             if self.rect.top > self.screen_rect.top:
-                self.rect_y -= 250 * delta_ms / 1000
+                self.rect_y -= self.speed
             else:
                 self.next_turn = ticks
 

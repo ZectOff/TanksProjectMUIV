@@ -28,7 +28,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.center = tank.rect.center
         self.y = float(self.rect.centery)
         self.x = float(self.rect.centerx)
-        self.speed = 12
         self.sound_exp = bullet_explosion
         self.btUp = False  # bt - BulletTurn
         self.btRight = False
@@ -39,8 +38,9 @@ class Bullet(pygame.sprite.Sprite):
         """Отрисовка пули на экране"""
         self.screen.blit(self.image, (self.rect.centerx - 17.5, self.rect.centery - 17.5))
 
-    def update(self):
+    def update(self, delta_ms):
         """Перемещение пули"""
+        self.speed = 450 * delta_ms / 1000
         #Пуля летит вниз
         if self.btDown == True:
             self.image = DownBull
