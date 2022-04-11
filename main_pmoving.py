@@ -15,7 +15,8 @@ enemy_dead = pygame.mixer.Sound('Sounds/destroy.wav')
 win_sound = pygame.mixer.Sound('Sounds/win_game.mp3')
 lose_sound = pygame.mixer.Sound('Sounds/lose_game.mp3')
 
-def events (screen, tank, bullets, delta_ms):
+
+def events (screen, tank, bullets, all_objects):
     """Обработка события"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -53,7 +54,7 @@ def events (screen, tank, bullets, delta_ms):
             elif event.key == pygame.K_SPACE:
                 # Каждый раз при нажатии пробел - создается пуля и добавляется в контейнер bullets
                 if len(bullets) < 1:
-                    new_bullet = Bullet(screen, tank)
+                    new_bullet = Bullet(screen, tank, all_objects)
                     pygame.mixer.Sound.play(bullet_spawn)
                     if tank.mbottom == True or tank.LastMove == "Down":
                         new_bullet.btDown = True
@@ -91,7 +92,10 @@ def update(bg_color, screen, tank, bullets, enemies, blocks):
         enemy.draw_enemy()
     for block in blocks.sprites():
         block.draw_block()
+    # for obj in all_objects:
+    #     obj.draw()
     pygame.display.flip()
+
 
 def bullets_update(bullets, enemies, stats, delta_ms):
     bullets.update(delta_ms)
@@ -100,6 +104,7 @@ def bullets_update(bullets, enemies, stats, delta_ms):
         stats.killed_enemies += 1
         print(str(stats.killed_enemies) + " Врагов убито.")
 
+
 def update_blocks(blocks, bullets, enemies, tank):
     blocks.update()
     cruths = Group()
@@ -107,16 +112,16 @@ def update_blocks(blocks, bullets, enemies, tank):
     if pygame.sprite.groupcollide(bullets, blocks, True, True):
         pygame.mixer.Sound.play(brik_dead)
     elif pygame.sprite.groupcollide(enemies, blocks, False, False):
+        pass # print("Враг столкнулся с кирпичной стеной")
+    elif pygame.sprite.groupcollide(cruths, blocks, False, True):
+        pass # print("Вы столкнулись с кирпичной стеной")
 
-        print("Враг столкнулся с кирпичной стеной")
-    elif pygame.sprite.groupcollide(cruths, blocks, False, False):
-        print("Вы столкнулись с кирпичной стеной")
 
-def update_enemies(enemies, delta_ms, tank, stats, screen, bullets):
+def update_enemies(enemies, delta_ms, tank, stats, screen, bullets, all_objects, blocks):
     """Обновление врагов"""
     cruths1 = Group()
     cruths1.add(tank)
-    enemies.update(delta_ms)
+    enemies.update(delta_ms, blocks)
     if len(enemies) == 0:
         print('Вы выиграли, победив всех врагов!')
         pygame.mixer.Sound.play(win_sound)
@@ -124,12 +129,13 @@ def update_enemies(enemies, delta_ms, tank, stats, screen, bullets):
         sys.exit()
     if pygame.sprite.groupcollide(cruths1, enemies, False, True):
         if stats.tank_lifes == 1:
-            tank_die(stats, screen, tank, enemies, bullets)
+            tank_die(stats, screen, tank, enemies, bullets, all_objects)
         elif stats.tank_lifes != 0:
             print('Вы потеряли одну жизнь!')
-            tank_die(stats, screen, tank, enemies, bullets)
+            tank_die(stats, screen, tank, enemies, bullets, all_objects)
 
-def tank_die(stats, screen, tank, enemies, bullets):
+
+def tank_die(stats, screen, tank, enemies, bullets, all_objects):
     """Столкновение врагов с игроком"""
     stats.tank_lifes -= 1
     pygame.mixer.Sound.play(tank_died)
@@ -142,28 +148,31 @@ def tank_die(stats, screen, tank, enemies, bullets):
         print(str(stats.tank_lifes) + " Жизней осталось.")
         enemies.empty()
         bullets.empty()
-        create_enemies(screen, enemies)
+        create_enemies(screen, enemies, all_objects)
         time.sleep(0.5)
         tank.create_tank()
 
-def create_enemies(screen, enemies):
+
+def create_enemies(screen, enemies, all_objects):
     """Создание нескольких врагов"""
     for e_num in range(5):
-        # if len(enemies) < 5:
-        enemy = Enemy(screen)
+        enemy = Enemy(screen, all_objects)
         enemies.add(enemy)
 
-def create_blocks(screen, blocks):
-    global WEIGHT, HEIGHT
-    for b_num in range(15):
+
+def create_blocks(screen, blocks, enemies, tank, all_objects):
+    for _ in range(60):
         while True:
-            x = randint(0, WEIGHT // 85 - 1) * 85
-            y = randint(0, HEIGHT // 85 - 1) * 85
-            rect = pygame.Rect(x, y, 85, 85)
+            x = randint(0, WEIGHT // 86) * 86
+            y = randint(0, HEIGHT // 86) * 86
+            rect1 = pygame.Rect(x, y, 86, 86)
             fined = False
-            for block in blocks:
-                if rect.colliderect(block.rect): # Уперся в то, что нужен список всех объектов
-                    fined = True # Без него не сможем прописывать нормально взаимодействия
-            if not fined: break # Тут вместо block.rect нужен all_spr.rect
-        block = Block(screen)
+            for enemy in enemies:
+                if rect1.colliderect(enemy.rect) or rect1.colliderect(tank.rect): # Проверка столкнулся ли блок с врагом или танком
+                    fined = True # Если да тогда цикл по новой, нет: блок спавнится
+            if not fined: # Цикл требует доработки ибо блоки все равно спавнятся во врагах или в игроке
+                break
+
+        block = Block(screen, all_objects, x, y)
         blocks.add(block)
+        print(blocks)

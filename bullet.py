@@ -1,6 +1,5 @@
 import pygame
 
-
 pygame.init()
 b_Up = pygame.image.load('Images/Bullet_up.png')
 UpBull = pygame.transform.scale(b_Up, (30, 30))
@@ -15,19 +14,20 @@ bullet_explosion = pygame.mixer.Sound('Sounds/bullet_exp.mp3')
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, screen, tank):
+    def __init__(self, screen, tank, all_objects):
         """Создаем пулю в позиции пушки"""
         super(Bullet, self).__init__()
+        all_objects.add(self)
         self.screen = screen
+        self.type = 'Bullet'
         self.screen_rect = screen.get_rect()
         self.image = pygame.image.load('Images/Bullet_up.png')
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
-        self.rect.centerx = tank.rect.centerx
-        self.rect.centery = tank.rect.centery
-        self.rect.center = tank.rect.center
-        self.y = float(self.rect.centery)
-        self.x = float(self.rect.centerx)
+        self.rect.centerx = tank.rect.centerx - 30
+        self.rect.centery = tank.rect.centery - 30
+        self.y = float(self.rect.centery) + 15
+        self.x = float(self.rect.centerx) + 15
         self.sound_exp = bullet_explosion
         self.btUp = False  # bt - BulletTurn
         self.btRight = False
@@ -36,11 +36,11 @@ class Bullet(pygame.sprite.Sprite):
 
     def draw_bullet(self):
         """Отрисовка пули на экране"""
-        self.screen.blit(self.image, (self.rect.centerx - 17.5, self.rect.centery - 17.5))
+        self.screen.blit(self.image, (self.x, self.y))#(self.rect.centerx, self.rect.centery)) # Костыльный спавн пули...
 
     def update(self, delta_ms):
         """Перемещение пули"""
-        self.speed = 450 * delta_ms / 1000
+        self.speed = 350 * delta_ms / 1000
         #Пуля летит вниз
         if self.btDown == True:
             self.image = DownBull
