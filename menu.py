@@ -43,19 +43,17 @@ class Menu:
             surf.blit(option, option_rect)
 
 
-def print_text(message, x, y, font_bold, font_type = 'CLOUD SANS', font_size = 30, font_color = (255, 255, 255)):
-    font_type = pygame.font.SysFont(font_type, font_size, font_bold)
+def print_text(message, x, y, font_type=ARIAL_50, font_bold=0, font_size = 30, font_color = 9):
     text = font_type.render(message, True, font_color)
     screen.blit(text, (x, y))
 
 
-
 class Button:
-    def __init__(self, width, height, inactive_color, active_color):
+    def __init__(self, width, height, inactive_color=(0, 0, 0), active_color=(255, 255, 255)):
         self.width = width
         self.height = height
-        self.inactive_clr = (156, 11, 11)
-        self.active_clr = (255, 0, 0)
+        self.inactive_clr = inactive_color
+        self.active_clr = active_color
 
     def draw(self, x, y, message, action=None):
         mouse = pygame.mouse.get_pos()
@@ -63,7 +61,7 @@ class Button:
 
         if x < mouse[0] < x + self.width: # курсор на кнопке
             if y < mouse[1] < y + self.height:
-                pygame.draw.rect(screen, self.active_clr, (x, y, self.width, self.height))
+                pygame.draw.rect(screen, (255, 0, 0), (x, y, self.width, self.height))
                 pygame.mixer.Sound.play(btn_swap)
                 pygame.time.delay(300) # задержка звука
 
@@ -74,8 +72,15 @@ class Button:
                         action()
 
         else: # курсор не на кнопке
-            pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
-        print_text(message, x + 10, y + 10, False)
+            pygame.draw.rect(screen, (156, 11, 11), (x, y, self.width, self.height))
+
+        print_text(message, x + 10, y + 10)
+
+    def mouse_down(self, mouse_event):
+        print(f"down {mouse_event}")
+
+    def mouse_up(self, mouse_event):
+        print(f"up {mouse_event}")
 
 # доделать изменение жирность при наводки мышки на текст , так же доделать
 # функцию кнопки и реализовать меню до конца
