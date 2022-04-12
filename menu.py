@@ -54,8 +54,8 @@ class Button:
     def __init__(self, width, height, inactive_color, active_color):
         self.width = width
         self.height = height
-        self.inactive_clr = inactive_color
-        self.active_clr = active_color
+        self.inactive_clr = (156, 11, 11)
+        self.active_clr = (255, 0, 0)
 
     def draw(self, x, y, message, action=None):
         mouse = pygame.mouse.get_pos()
@@ -63,7 +63,7 @@ class Button:
 
         if x < mouse[0] < x + self.width: # курсор на кнопке
             if y < mouse[1] < y + self.height:
-                pygame.draw.rect(screen, (255, 0, 0), (x, y, self.width, self.height))
+                pygame.draw.rect(screen, self.active_clr, (x, y, self.width, self.height))
                 pygame.mixer.Sound.play(btn_swap)
                 pygame.time.delay(300) # задержка звука
 
@@ -74,7 +74,7 @@ class Button:
                         action()
 
         else: # курсор не на кнопке
-            pygame.draw.rect(screen, (156, 11, 11), (x, y, self.width, self.height))
+            pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
         print_text(message, x + 10, y + 10, False)
 
 # доделать изменение жирность при наводки мышки на текст , так же доделать
