@@ -1,7 +1,8 @@
 import pygame
-from main import screen
+from constants import WEIGHT, HEIGHT
 
 pygame.init()
+screen = pygame.display.set_mode((WEIGHT, HEIGHT))
 btn_swap = pygame.mixer.Sound('Sounds/swap_button.wav')
 btn_pressed = pygame.mixer.Sound('Sounds/pressed_button.wav')
 btn_font = pygame.font.SysFont('CLOUD SANS', 50)
@@ -42,15 +43,13 @@ class Menu:
             surf.blit(option, option_rect)
 
 
-def print_text(message, x, y, font_color, font_type, font_bold, font_size = 30):
-    font_type = pygame.font.SysFont(font_type, font_size, font_bold)
+def print_text(message, x, y, font_type=ARIAL_50, font_bold=0, font_size = 30, font_color = 9):
     text = font_type.render(message, True, font_color)
     screen.blit(text, (x, y))
 
 
-
 class Button:
-    def __init__(self, width, height, inactive_color, active_color):
+    def __init__(self, width, height, inactive_color=(0, 0, 0), active_color=(255, 255, 255)):
         self.width = width
         self.height = height
         self.inactive_clr = inactive_color
@@ -74,6 +73,14 @@ class Button:
 
         else: # курсор не на кнопке
             pygame.draw.rect(screen, (156, 11, 11), (x, y, self.width, self.height))
+
+        print_text(message, x + 10, y + 10)
+
+    def mouse_down(self, mouse_event):
+        print(f"down {mouse_event}")
+
+    def mouse_up(self, mouse_event):
+        print(f"up {mouse_event}")
 
 # доделать изменение жирность при наводки мышки на текст , так же доделать
 # функцию кнопки и реализовать меню до конца
