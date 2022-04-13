@@ -6,6 +6,7 @@ class Block(pygame.sprite.Sprite):
         super(Block, self).__init__()
         all_objects.add(self)
         self.screen = screen
+        self.type = "Block"
         self.screen_rect = self.screen.get_rect()
         self.image = pygame.image.load("Images/bricks.png")
         self.image = pygame.transform.scale(self.image, (86, 86))

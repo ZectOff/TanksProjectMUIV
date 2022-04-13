@@ -1,7 +1,7 @@
 import time
 import  pygame, sys
 from random import randint
-from constants import WEIGHT, HEIGHT
+from constants import WEIGHT, HEIGHT, BLOCK_SIZE
 from bullet import Bullet
 from enemy import Enemy
 from block import Block
@@ -92,8 +92,6 @@ def update(bg_color, screen, tank, bullets, enemies, blocks):
         enemy.draw_enemy()
     for block in blocks.sprites():
         block.draw_block()
-    # for obj in all_objects:
-    #     obj.draw()
     pygame.display.flip()
 
 
@@ -155,24 +153,46 @@ def tank_die(stats, screen, tank, enemies, bullets, all_objects):
 
 def create_enemies(screen, enemies, all_objects):
     """Создание нескольких врагов"""
-    for e_num in range(5):
-        enemy = Enemy(screen, all_objects)
-        enemies.add(enemy)
+    x = 150
+    y = 200
+    for e_num in range(3):
+        if len(enemies) < 1:
+            x = 150
+            enemy = Enemy(screen, all_objects, x, y)
+            enemies.add(enemy)
+        else:
+            x += 350
+            enemy = Enemy(screen, all_objects, x, y)
+            enemies.add(enemy)
+
+
+def no_tank(rect, enemies, tank, all_objects):
+    if rect.colliderect(tank.rect):
+        print(f"Столкнулись: tank - {tank.rect} и block - {rect}")
+        return False
+    # for enemy in enemies:
+    #     if rect.colliderect(enemy.rect):
+    #         print(f"Столкнулись: enemy - {enemy.rect} и block - {rect}")
+    #         return False
+    for object in all_objects:
+        if rect.colliderect(object.rect):
+            print(f"Столкнулись: object - {object.rect} {object.type} и block - {rect}")
+            return False
+    print(f"Проверено, блок заспавнен на: {rect}")
+    return True
 
 
 def create_blocks(screen, blocks, enemies, tank, all_objects):
-    for _ in range(60):
-        while True:
-            x = randint(0, WEIGHT // 86) * 86
-            y = randint(0, HEIGHT // 86) * 86
-            rect1 = pygame.Rect(x, y, 86, 86)
-            fined = False
-            for enemy in enemies:
-                if rect1.colliderect(enemy.rect) or rect1.colliderect(tank.rect): # Проверка столкнулся ли блок с врагом или танком
-                    fined = True # Если да тогда цикл по новой, нет: блок спавнится
-            if not fined: # Цикл требует доработки ибо блоки все равно спавнятся во врагах или в игроке
-                break
-
+    coord_set = set()
+    while len(coord_set) < 60:
+            x = randint(0, WEIGHT // BLOCK_SIZE - 1) * BLOCK_SIZE
+            y = randint(0, HEIGHT // BLOCK_SIZE - 1) * BLOCK_SIZE
+            if (x, y) not in coord_set:
+                rect_1 = pygame.Rect(x, y, BLOCK_SIZE, BLOCK_SIZE)
+                if no_tank(rect_1, enemies, tank, all_objects):
+                    coord_set.add((x, y))
+    for x, y in coord_set:
         block = Block(screen, all_objects, x, y)
         blocks.add(block)
-        print(blocks)
+
+

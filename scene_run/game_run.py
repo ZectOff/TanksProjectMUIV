@@ -18,6 +18,8 @@ def run(screen, clock):
     stats = Game_stats()
     main_pmoving.create_enemies(screen, enemies, all_objects)
     main_pmoving.create_blocks(screen, blocks, enemies, tank, all_objects)
+    for obj in all_objects:
+        print(obj.rect)
 
 
 

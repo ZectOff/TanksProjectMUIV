@@ -14,7 +14,7 @@ down_e = pygame.transform.scale(E_Down, (80, 80))
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, screen, all_objects):
+    def __init__(self, screen, all_objects, px, py):
         super(Enemy, self).__init__()
         all_objects.add(self)
         self.screen = screen
@@ -23,11 +23,14 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (80, 80))
         self.screen_rect = screen.get_rect()
         self.rect = self.image.get_rect()
-        self.rect.center = (rd.randint(100, 1500), rd.randint(85, 250))
+        self.px = px
+        self.py = py
+        self.rect.center = (px, py)#(rd.randint(100, 1500), rd.randint(85, 250))
         self.rect_x = float(self.rect.centerx)
         self.rect_y = float(self.rect.centery)
         self.next_turn = 0
         self.turn = ""
+
 
     def draw_enemy(self):
         self.screen.blit(self.image, self.rect)
