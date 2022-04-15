@@ -49,7 +49,7 @@ def print_text(message, x, y, font_type=ARIAL_50, font_bold=0, font_size = 30, f
 
 
 class Button:
-    def __init__(self, width, height, inactive_color=(0, 0, 0), active_color=(255, 255, 255)):
+    def __init__(self, width, height, inactive_color=(156, 11, 11), active_color=(255, 0, 0)):
         self.width = width
         self.height = height
         self.inactive_clr = inactive_color
@@ -59,9 +59,8 @@ class Button:
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
-        if x < mouse[0] < x + self.width: # курсор на кнопке
-            if y < mouse[1] < y + self.height:
-                pygame.draw.rect(screen, (255, 0, 0), (x, y, self.width, self.height))
+        if x < mouse[0] < x + self.width and  y < mouse[1] < y + self.height:
+                pygame.draw.rect(screen, self.active_clr, (x - 20, y, self.width + 40, self.height))
                 # pygame.mixer.Sound.play(btn_swap)
                 # pygame.mixer.pause()
 
@@ -73,7 +72,7 @@ class Button:
                         action()
 
         else: # курсор не на кнопке
-            pygame.draw.rect(screen, (156, 11, 11), (x, y, self.width, self.height))
+            pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
 
         print_text(message, x + 10, y + 10)
 
