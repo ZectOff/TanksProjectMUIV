@@ -1,7 +1,7 @@
 import time
 import  pygame, sys
-from random import randint
-from constants import WEIGHT, HEIGHT, BLOCK_SIZE
+# from random import randint
+# from constants import WEIGHT, HEIGHT, BLOCK_SIZE
 from bullet import Bullet
 from enemy import Enemy
 from block import Block
@@ -82,7 +82,7 @@ def events (screen, tank, bullets, all_objects):
                 tank.mbottom = False
 
 
-def update(bg_color, screen, tank, bullets, enemies, blocks):
+def update(bg_color, screen, tank, bullets, enemies, blocks, bangs):
     """Обновление экрана игры"""
     screen.fill(bg_color)
     for bullet in bullets.sprites():
@@ -92,11 +92,13 @@ def update(bg_color, screen, tank, bullets, enemies, blocks):
         enemy.draw_enemy()
     for block in blocks.sprites():
         block.draw_block()
+    for bang in bangs.sprites():
+        bang.draw()
     pygame.display.flip()
 
 
-def bullets_update(bullets, enemies, stats, delta_ms):
-    bullets.update(delta_ms)
+def bullets_update(screen, bullets, enemies, stats, delta_ms, all_objects, bangs):
+    bullets.update(delta_ms, screen, all_objects, bangs)
     if pygame.sprite.groupcollide(bullets, enemies, True, True):
         pygame.mixer.Sound.play(enemy_dead)
         stats.killed_enemies += 1
@@ -115,6 +117,9 @@ def update_blocks(blocks, bullets, enemies, tank):
         pass # print("Вы столкнулись с кирпичной стеной")
 
 
+def update_bangs(bangs):
+    bangs.update(bangs)
+
 def update_enemies(enemies, delta_ms, tank, stats, screen, bullets, all_objects, blocks):
     """Обновление врагов"""
     cruths1 = Group()
@@ -127,13 +132,13 @@ def update_enemies(enemies, delta_ms, tank, stats, screen, bullets, all_objects,
         sys.exit()
     if pygame.sprite.groupcollide(cruths1, enemies, False, True):
         if stats.tank_lifes == 1:
-            tank_die(stats, screen, tank, enemies, bullets, all_objects)
+            tank_die(stats, screen, tank, enemies, bullets, all_objects, blocks)
         elif stats.tank_lifes != 0:
             print('Вы потеряли одну жизнь!')
-            tank_die(stats, screen, tank, enemies, bullets, all_objects)
+            tank_die(stats, screen, tank, enemies, bullets, all_objects, blocks)
 
 
-def tank_die(stats, screen, tank, enemies, bullets, all_objects):
+def tank_die(stats, screen, tank, enemies, bullets, all_objects, blocks):
     """Столкновение врагов с игроком"""
     stats.tank_lifes -= 1
     pygame.mixer.Sound.play(tank_died)
@@ -146,9 +151,10 @@ def tank_die(stats, screen, tank, enemies, bullets, all_objects):
         print(str(stats.tank_lifes) + " Жизней осталось.")
         enemies.empty()
         bullets.empty()
-        create_enemies(screen, enemies, all_objects)
+        blocks.empty()
+        draw_level(screen, blocks, all_objects, enemies, tank)
         time.sleep(0.5)
-        tank.create_tank()
+        tank.create_tank(8, 7)
 
 
 def create_enemies(screen, enemies, all_objects):
@@ -165,7 +171,7 @@ def create_enemies(screen, enemies, all_objects):
             enemy = Enemy(screen, all_objects, x, y)
             enemies.add(enemy)
 
-
+'''
 def no_tank(rect, enemies, tank, all_objects):
     if rect.colliderect(tank.rect):
         print(f"Столкнулись: tank - {tank.rect} и block - {rect}")
@@ -184,9 +190,11 @@ def no_tank(rect, enemies, tank, all_objects):
 
 def create_blocks(screen, blocks, enemies, tank, all_objects):
     coord_set = set()
-    while len(coord_set) < 60:
-            x = randint(0, WEIGHT // BLOCK_SIZE - 1) * BLOCK_SIZE
-            y = randint(0, HEIGHT // BLOCK_SIZE - 1) * BLOCK_SIZE
+    while len(coord_set) < 10:
+        #x = randint(0, WEIGHT // BLOCK_SIZE - 1) * BLOCK_SIZE
+        x = randint(0, WEIGHT // BLOCK_SIZE - 1) * BLOCK_SIZE
+        y = randint(0, HEIGHT // BLOCK_SIZE - 1) * BLOCK_SIZE
+        if x > 0 or y > 0:
             if (x, y) not in coord_set:
                 rect_1 = pygame.Rect(x, y, BLOCK_SIZE, BLOCK_SIZE)
                 if no_tank(rect_1, enemies, tank, all_objects):
@@ -194,5 +202,28 @@ def create_blocks(screen, blocks, enemies, tank, all_objects):
     for x, y in coord_set:
         block = Block(screen, all_objects, x, y)
         blocks.add(block)
+'''
 
+def load_level():
+    with open("Levels/level_1_map.txt", "r") as map_file:
+        level_map = []
+        for line in map_file:
+            line = line.strip()
+            level_map.append(line)
+    return level_map
+
+
+
+def draw_level(screen, blocks, all_objects, enemies, tank):
+    level_map = load_level()
+    for y in range(len(level_map)):
+        for x in range(len(level_map[y])):
+            if level_map[y][x] == '#':
+                block = Block(screen, all_objects, x, y)
+                blocks.add(block)
+            elif level_map[y][x] == 'E':
+                enemy = Enemy(screen, all_objects, x, y)
+                enemies.add(enemy)
+            elif level_map[y][x] == '@':
+                tank.create_tank(x, y)
 

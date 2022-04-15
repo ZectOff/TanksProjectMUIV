@@ -7,3 +7,4 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BLOCK_SIZE = 86
+TANK_SIZE = 80

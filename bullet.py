@@ -1,4 +1,5 @@
 import pygame
+from bang import Bang
 
 pygame.init()
 b_Up = pygame.image.load('Images/Bullet_up.png')
@@ -24,10 +25,12 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load('Images/Bullet_up.png')
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
-        self.rect.centerx = tank.rect.centerx - 30
-        self.rect.centery = tank.rect.centery - 30
-        self.y = float(self.rect.centery) + 15
-        self.x = float(self.rect.centerx) + 15
+        self.rect.centerx = tank.rect.centerx - 15
+        self.rect.centery = tank.rect.centery - 15
+        print(self.rect.centerx, self.rect.centery)
+        self.y = float(self.rect.centery)
+        self.x = float(self.rect.centerx)
+        print(self.x, self.y)
         self.sound_exp = bullet_explosion
         self.btUp = False  # bt - BulletTurn
         self.btRight = False
@@ -38,37 +41,42 @@ class Bullet(pygame.sprite.Sprite):
         """Отрисовка пули на экране"""
         self.screen.blit(self.image, (self.x, self.y))#(self.rect.centerx, self.rect.centery)) # Костыльный спавн пули...
 
-    def update(self, delta_ms):
+    def update(self, delta_ms, screen, all_objects, bangs):
         """Перемещение пули"""
         self.speed = 350 * delta_ms / 1000
         #Пуля летит вниз
         if self.btDown == True:
             self.image = DownBull
             self.y += self.speed
-            if self.rect.bottom > self.screen_rect.bottom:
-                self.kill()
-                pygame.mixer.Sound.play(self.sound_exp)
+            # if self.rect.bottom > self.screen_rect.bottom:
+            #     self.kill()
+            #     pygame.mixer.Sound.play(self.sound_exp)
         # Пуля летит вверх
         if self.btUp == True:
             self.image = UpBull
             self.y -= self.speed
-            if self.rect.top <= self.screen_rect.top:
-                self.kill()
-                pygame.mixer.Sound.play(self.sound_exp)
+            # if self.rect.top <= self.screen_rect.top:
+            #     self.kill()
+            #     pygame.mixer.Sound.play(self.sound_exp)
         # Пуля летит вправо
         if self.btRight == True:
             self.image = RightBull
             self.x += self.speed
-            if self.rect.right > self.screen_rect.right:
-                self.kill()
-                pygame.mixer.Sound.play(self.sound_exp)
+            # if self.rect.right > self.screen_rect.right:
+            #     self.kill()
+            #     pygame.mixer.Sound.play(self.sound_exp)
         # Пуля летит влево
         if self.btLeft == True:
             self.image = LeftBull
             self.x -= self.speed
-            if self.rect.left < self.screen_rect.left:
-                self.kill()
-                pygame.mixer.Sound.play(self.sound_exp)
+            # if self.rect.left < self.screen_rect.left:
+            #     self.kill()
+            #     pygame.mixer.Sound.play(self.sound_exp)
+        if self.rect.bottom > self.screen_rect.bottom or self.rect.top <= self.screen_rect.top or self.rect.right > self.screen_rect.right or self.rect.left < self.screen_rect.left:
+            self.kill()
+            pygame.mixer.Sound.play(self.sound_exp)
+            new_bang = Bang(screen, all_objects, self.rect.centerx, self.rect.centery)
+            bangs.add(new_bang)
 
         self.rect.y = self.y
         self.rect.x = self.x # Из-за отрисовки по х, расположение пули сдвигается

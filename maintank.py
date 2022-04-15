@@ -1,15 +1,15 @@
 import pygame
-
+from constants import TANK_SIZE, BLOCK_SIZE
 
 pygame.init()
 Right_t = pygame.image.load('Images/MainTank_Right.png')
-goRight = pygame.transform.scale(Right_t, (80, 80))
+goRight = pygame.transform.scale(Right_t, (TANK_SIZE, TANK_SIZE))
 Up_t = pygame.image.load('Images/MainTank_Up.png')
-goUp = pygame.transform.scale(Up_t, (80, 80))
+goUp = pygame.transform.scale(Up_t, (TANK_SIZE, TANK_SIZE))
 Left_t = pygame.image.load('Images/MainTank_Left.png')
-goLeft = pygame.transform.scale(Left_t, (80, 80))
+goLeft = pygame.transform.scale(Left_t, (TANK_SIZE, TANK_SIZE))
 Down_t = pygame.image.load('Images/MainTank_Down.png')
-goDown = pygame.transform.scale(Down_t, (80, 80))
+goDown = pygame.transform.scale(Down_t, (TANK_SIZE, TANK_SIZE))
 
 class MainTank(pygame.sprite.Sprite):
     """Инициализируем Танк основного игрока"""
@@ -17,22 +17,28 @@ class MainTank(pygame.sprite.Sprite):
         super(MainTank, self).__init__()
         all_objects.add(self)
         self.screen = screen
+        self.screen_rect = screen.get_rect()
         self.type = 'Tank'
         self.image = pygame.image.load('Images/MainTank_Up.png')
-        self.image = pygame.transform.scale(self.image, (80, 80))
-        self.rect = self.image.get_rect()
-        self.screen_rect = screen.get_rect()
-        self.rect.centerx = self.screen_rect.centerx
-        self.rect.centery = self.screen_rect.centery
+        self.image = pygame.transform.scale(self.image, (TANK_SIZE, TANK_SIZE))
+        self.rect = self.image.get_rect()#.move(BLOCK_SIZE * 8, BLOCK_SIZE * 7)
+        self.perm_rect = self.rect
+        # self.rect.centerx = self.screen_rect.centerx
+        # self.rect.centery = self.screen_rect.centery
         self.r_center_x = float(self.rect.centerx) #Floating, для плавности движений
         self.r_center_y = float(self.rect.centery)
-        self.rect.center = self.screen_rect.center
-        print(self.rect.center)
+        # self.rect.center = self.screen_rect.center
         self.mright = False
         self.mleft = False
         self.mtop = False
         self.mbottom = False
         self.LastMove = "Up"
+
+    def create_tank(self, pos_x, pos_y):
+        """Размещение танка игрока по центру"""
+        self.spawn = (BLOCK_SIZE * pos_x, BLOCK_SIZE * pos_y)
+        self.rect = self.perm_rect.move(self.spawn)
+        print("Ваш танк встал на начальную точку")
 
     def own_tank_draw(self):
         """Отрисовывавем сам танк"""
@@ -60,8 +66,11 @@ class MainTank(pygame.sprite.Sprite):
             if block != self and self.rect.colliderect(block.rect):
                 self.rect.topleft = oldX, oldY
 
+    #
+    # def create_tank(self, pos_x, pos_y):
+    #     """Размещение танка игрока по центру"""
+    #     print(pos_x, pos_y)
+    #     self.rect = self.rect.move(BLOCK_SIZE * pos_x, BLOCK_SIZE * pos_y)
+    #     print(self.rect)
+    #     print("Ваш танк встал на начальную точку")
 
-    def create_tank(self):
-        """Размещение танка игрока по центру"""
-        self.rect.center = self.screen_rect.center
-        print("Встал по центру")
