@@ -15,7 +15,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 # Шрифт
-ARIAL_50 = pygame.font.SysFont('CLOUD SANS', 50, 1)
+ARIAL_50 = pygame.font.SysFont('CLOUD SANS', 50)
 
 
 class Menu:
@@ -43,7 +43,7 @@ class Menu:
             surf.blit(option, option_rect)
 
 
-def print_text(message, x, y, font_type=ARIAL_50, font_bold=0, font_size = 30, font_color = 9):
+def print_text(message, x, y, font_type=ARIAL_50, font_bold=0, font_size = 30, font_color = (255, 255, 255)):
     text = font_type.render(message, True, font_color)
     screen.blit(text, (x, y))
 
@@ -62,12 +62,13 @@ class Button:
         if x < mouse[0] < x + self.width: # курсор на кнопке
             if y < mouse[1] < y + self.height:
                 pygame.draw.rect(screen, (255, 0, 0), (x, y, self.width, self.height))
-                pygame.mixer.Sound.play(btn_swap)
-                pygame.time.delay(300) # задержка звука
+                # pygame.mixer.Sound.play(btn_swap)
+                # pygame.mixer.pause()
+
 
                 if click[0] == 1:
                     pygame.mixer.Sound.play(btn_pressed)
-                    pygame.time.delay(300)
+
                     if action is not None:
                         action()
 
@@ -76,11 +77,6 @@ class Button:
 
         print_text(message, x + 10, y + 10)
 
-    def mouse_down(self, mouse_event):
-        print(f"down {mouse_event}")
-
-    def mouse_up(self, mouse_event):
-        print(f"up {mouse_event}")
 
 # доделать изменение жирность при наводки мышки на текст , так же доделать
 # функцию кнопки и реализовать меню до конца

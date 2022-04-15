@@ -13,7 +13,7 @@ def run(screen, clock):
     # menu.append_option('Начать игру!', lambda: scene_manager.change_scene(scene_manager.game))
     # menu.append_option('Параметры', lambda: print('hello world!'))
     # menu.append_option('Выход', quit)
-    button = Button(200, 50)
+    button = Button(212, 50)
 
     while scene_manager.running:
         # Держим цикл на правильной скорости
@@ -23,13 +23,6 @@ def run(screen, clock):
             # Проверка на закрытие окна
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                button.mouse_down(event)
-            if event.type == pygame.MOUSEBUTTONUP:
-                button.mouse_up(event)
-
-
-
 
         # Обновление
         # Визуализация, редеринг (сборка)
