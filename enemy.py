@@ -1,6 +1,7 @@
 import pygame
 import random as rd
 from constants import TANK_SIZE, BLOCK_SIZE
+from bang import Bang
 
 pygame.init()
 E_Right = pygame.image.load('Images/EnemyTank_Right.png')
@@ -36,7 +37,8 @@ class Enemy(pygame.sprite.Sprite):
         self.screen.blit(self.image, self.rect)
 
 
-    def update(self, delta_ms, blocks):
+    def update(self, delta_ms, blocks, bangs, bullets,
+               screen, all_objects, enemies):
         """Перемещение врагов"""
         self.speed = 125 * delta_ms / 1000
         ticks = pygame.time.get_ticks()
@@ -75,5 +77,15 @@ class Enemy(pygame.sprite.Sprite):
                 self.next_turn = ticks
 
         for block in blocks:
-            if block != self and self.rect.colliderect(block.rect):
-                self.rect.topleft = oldX, oldY #Дополнить: Враги не должны проходить сквозь друг друга
+            if block != self and self.rect.colliderect(block.rect) \
+                    and self.rect.colliderect(self.rect):
+                self.rect.topleft = oldX, oldY
+                self.next_turn = ticks
+        for enemy in enemies:
+            if enemy != self and self.rect.colliderect(enemy.rect):
+                self.rect.topleft = oldX, oldY
+                self.next_turn = ticks
+        # for bullet in bullets:
+        #     if bullet.rect.colliderect(self.rect):
+        #         new_bang1 = Bang(screen, all_objects, bullet.rect.centerx, bullet.rect.centery)
+        #         bangs.add(new_bang1)

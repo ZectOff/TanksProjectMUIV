@@ -1,7 +1,5 @@
 import time
 import  pygame, sys
-# from random import randint
-# from constants import WEIGHT, HEIGHT, BLOCK_SIZE
 from bullet import Bullet
 from enemy import Enemy
 from block import Block
@@ -82,7 +80,8 @@ def events (screen, tank, bullets, all_objects):
                 tank.mbottom = False
 
 
-def update(bg_color, screen, tank, bullets, enemies, blocks, bangs):
+def update(bg_color, screen, tank, bullets,
+           enemies, blocks, bangs):
     """Обновление экрана игры"""
     screen.fill(bg_color)
     for bullet in bullets.sprites():
@@ -97,34 +96,51 @@ def update(bg_color, screen, tank, bullets, enemies, blocks, bangs):
     pygame.display.flip()
 
 
-def bullets_update(screen, bullets, enemies, stats, delta_ms, all_objects, bangs):
-    bullets.update(delta_ms, screen, all_objects, bangs)
-    if pygame.sprite.groupcollide(bullets, enemies, True, True):
-        pygame.mixer.Sound.play(enemy_dead)
-        stats.killed_enemies += 1
-        print(str(stats.killed_enemies) + " Врагов убито.")
+def bullets_update(screen, bullets, enemies, stats,
+                   delta_ms, all_objects, bangs, blocks):
+    bullets.update(delta_ms, screen, all_objects, bangs,
+                   enemies, blocks)
+    # if pygame.sprite.groupcollide(bullets, enemies, True, True):
+        # for bullet in bullets:
+        #     new_bang1 = Bang(screen, all_objects, bullet.rect.centerx, bullet.rect.centery)
+        #     bangs.add(new_bang1)
+        #     bullet.kill()
+    for enemy in enemies:
+        for bullet in bullets:
+            if bullet.rect.colliderect(enemy.rect):
+                pygame.mixer.Sound.play(enemy_dead)
+                stats.killed_enemies += 1
+                print(str(stats.killed_enemies) + " Врагов убито.")
 
 
-def update_blocks(blocks, bullets, enemies, tank):
+def update_blocks(screen, all_objects, blocks, bullets, bangs):
     blocks.update()
-    cruths = Group()
-    cruths.add(tank)
-    if pygame.sprite.groupcollide(bullets, blocks, True, True):
-        pygame.mixer.Sound.play(brik_dead)
-    elif pygame.sprite.groupcollide(enemies, blocks, False, False):
-        pass # print("Враг столкнулся с кирпичной стеной")
-    elif pygame.sprite.groupcollide(cruths, blocks, False, True):
-        pass # print("Вы столкнулись с кирпичной стеной")
+    # if pygame.sprite.groupcollide(bullets, blocks, True, True):
+    # pygame.mixer.Sound.play(brik_dead)
+    #     print("Hhhja")
+    #     for bullet in bullets:
+    #         print("ssdd")
+    #         new_bang2 = Bang(screen, bullet.rect.centex, bullet.rect.centey)
+    #         bangs.add(new_bang2)
+    #         break
+    for block in blocks:
+        for bullet in bullets:
+            if block.rect.colliderect(bullet.rect):
+                pygame.mixer.Sound.play(brik_dead)
 
 
 def update_bangs(bangs):
     bangs.update(bangs)
 
-def update_enemies(enemies, delta_ms, tank, stats, screen, bullets, all_objects, blocks):
+
+def update_enemies(enemies, delta_ms, tank, stats,
+                   screen, bullets, all_objects, blocks,
+                   bangs):
     """Обновление врагов"""
     cruths1 = Group()
     cruths1.add(tank)
-    enemies.update(delta_ms, blocks)
+    enemies.update(delta_ms, blocks, bangs, bullets,
+                   screen, all_objects, enemies)
     if len(enemies) == 0:
         print('Вы выиграли, победив всех врагов!')
         pygame.mixer.Sound.play(win_sound)
@@ -132,13 +148,16 @@ def update_enemies(enemies, delta_ms, tank, stats, screen, bullets, all_objects,
         sys.exit()
     if pygame.sprite.groupcollide(cruths1, enemies, False, True):
         if stats.tank_lifes == 1:
-            tank_die(stats, screen, tank, enemies, bullets, all_objects, blocks)
+            tank_die(stats, screen, tank, enemies,
+                     bullets, all_objects, blocks)
         elif stats.tank_lifes != 0:
             print('Вы потеряли одну жизнь!')
-            tank_die(stats, screen, tank, enemies, bullets, all_objects, blocks)
+            tank_die(stats, screen, tank, enemies,
+                     bullets, all_objects, blocks)
 
 
-def tank_die(stats, screen, tank, enemies, bullets, all_objects, blocks):
+def tank_die(stats, screen, tank, enemies,
+             bullets, all_objects, blocks):
     """Столкновение врагов с игроком"""
     stats.tank_lifes -= 1
     pygame.mixer.Sound.play(tank_died)
@@ -153,7 +172,7 @@ def tank_die(stats, screen, tank, enemies, bullets, all_objects, blocks):
         bullets.empty()
         blocks.empty()
         draw_level(screen, blocks, all_objects, enemies, tank)
-        time.sleep(0.5)
+        time.sleep(0.75)
         tank.create_tank(8, 7)
 
 
@@ -213,8 +232,8 @@ def load_level():
     return level_map
 
 
-
-def draw_level(screen, blocks, all_objects, enemies, tank):
+def draw_level(screen, blocks, all_objects,
+               enemies, tank):
     level_map = load_level()
     for y in range(len(level_map)):
         for x in range(len(level_map[y])):

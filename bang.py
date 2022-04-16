@@ -11,9 +11,8 @@ bull_bng_3 = pygame.transform.scale(exp3, (40, 40))
 images_bangs = [bull_bng_1, bull_bng_2, bull_bng_3]
 
 class Bang(pygame.sprite.Sprite):
-    def __init__(self, screen, all_objects, pos_x, pos_y):
+    def __init__(self, screen, pos_x, pos_y):
         super(Bang, self).__init__()
-        all_objects.add(self)
         self.screen = screen
         self.type = 'Bang'
         self.pos_x = pos_x
@@ -28,5 +27,4 @@ class Bang(pygame.sprite.Sprite):
     def draw(self):
         image_bng = images_bangs[int(self.frame)]
         rect_bng = image_bng.get_rect(center=(self.pos_x, self.pos_y))
-        print(rect_bng)
         self.screen.blit(image_bng, rect_bng)
