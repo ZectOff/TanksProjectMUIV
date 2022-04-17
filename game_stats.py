@@ -1,5 +1,4 @@
-
-
+import pygame
 class Game_stats():
     """Отслеживание статистики в игре"""
     def __init__(self):
@@ -11,3 +10,5 @@ class Game_stats():
         self.tank_lifes = 3
         self.killed_enemies = 0
         self.briks_lifes = 1
+        self.score = 0
+        self.count_hearts = self.tank_lifes

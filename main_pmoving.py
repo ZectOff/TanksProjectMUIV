@@ -81,7 +81,7 @@ def events (screen, tank, bullets, all_objects):
 
 
 def update(bg_color, screen, tank, bullets,
-           enemies, blocks, bangs):
+           enemies, blocks, bangs, stats, sc, hrt):
     """Обновление экрана игры"""
     screen.fill(bg_color)
     for bullet in bullets.sprites():
@@ -93,11 +93,15 @@ def update(bg_color, screen, tank, bullets,
         block.draw_block()
     for bang in bangs.sprites():
         bang.draw()
+    sc.show_score()
+    hrt.draw()
     pygame.display.flip()
+
+def hearts_update():
 
 
 def bullets_update(screen, bullets, enemies, stats,
-                   delta_ms, all_objects, bangs, blocks):
+                   delta_ms, all_objects, bangs, blocks, sc):
     bullets.update(delta_ms, screen, all_objects, bangs,
                    enemies, blocks)
     # if pygame.sprite.groupcollide(bullets, enemies, True, True):
@@ -110,8 +114,12 @@ def bullets_update(screen, bullets, enemies, stats,
             if bullet.rect.colliderect(enemy.rect):
                 pygame.mixer.Sound.play(enemy_dead)
                 stats.killed_enemies += 1
+                stats.score += 400
+                sc.image_score()
                 print(str(stats.killed_enemies) + " Врагов убито.")
 
+def score_upgrade(stats):
+    print('Hello epta how are you doing ')
 
 def update_blocks(screen, all_objects, blocks, bullets, bangs):
     blocks.update()

@@ -2,11 +2,11 @@ import pygame
 
 
 exp1 = pygame.image.load('Images/bull_exp_1.png')
-bull_bng_1 = pygame.transform.scale(exp1, (40, 40))
+bull_bng_1 = pygame.transform.scale(exp1, (60, 60))
 exp2 = pygame.image.load('Images/bull_exp_2.png')
-bull_bng_2 = pygame.transform.scale(exp2, (40, 40))
+bull_bng_2 = pygame.transform.scale(exp2, (60, 60))
 exp3 = pygame.image.load('Images/bull_exp_3.png')
-bull_bng_3 = pygame.transform.scale(exp3, (40, 40))
+bull_bng_3 = pygame.transform.scale(exp3, (60, 60))
 
 images_bangs = [bull_bng_1, bull_bng_2, bull_bng_3]
 
