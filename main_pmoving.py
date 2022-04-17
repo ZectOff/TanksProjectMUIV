@@ -98,7 +98,7 @@ def update(bg_color, screen, tank, bullets,
     pygame.display.flip()
 
 def hearts_update():
-
+    pass
 
 def bullets_update(screen, bullets, enemies, stats,
                    delta_ms, all_objects, bangs, blocks, sc):

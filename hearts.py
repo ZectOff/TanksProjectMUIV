@@ -1,5 +1,4 @@
 import pygame
-from game_stats
 
 class Hearts():
     def __init__(self, screen):
