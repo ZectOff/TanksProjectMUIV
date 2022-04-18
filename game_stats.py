@@ -11,4 +11,3 @@ class Game_stats():
         self.killed_enemies = 0
         self.briks_lifes = 1
         self.score = 0
-        self.count_hearts = self.tank_lifes

@@ -1,18 +1,20 @@
 import pygame
 
-class Hearts():
+class Hearts(pygame.sprite.Sprite):
     def __init__(self, screen):
+        super(Hearts, self).__init__()
         self.screen = screen
         self.image = pygame.image.load('Images/Heart.png')
         self.screen_rect = self.screen.get_rect()
         self.pos_x = self.screen_rect.left + 20
         self.pos_y = self.screen_rect.top + 20
-        self.rect = (self.pos_x, self.pos_y)
+        self.rect = self.image.get_rect().move(self.pos_x, self.pos_y)
 
 
-    def update(self):
-        pass # Доделать вывод сердечек
+    def update(self, stats):
+        count = stats.tank_lifes
+        print(f"Приветик сердечко{count}")
 
     def draw(self):
-        self.screen.blit(self.image, self.rect)
-        self.pos_x += 40
+        self.screen.blit(self.image, (self.pos_x, self.pos_y))
+        # self.pos_x += 10
