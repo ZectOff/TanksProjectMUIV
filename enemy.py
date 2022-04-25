@@ -1,7 +1,6 @@
 import pygame
 import random as rd
 from constants import TANK_SIZE, BLOCK_SIZE
-from bang import Bang
 
 pygame.init()
 E_Right = pygame.image.load('Images/EnemyTank_Right.png')
@@ -26,26 +25,25 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move((BLOCK_SIZE * pos_x), (BLOCK_SIZE * pos_y))
         self.px = pos_x
         self.py = pos_y
-        # self.rect.center = (pos_x, pos_y) # (rd.randint(100, 1500), rd.randint(85, 250))
         self.rect_x = float(self.rect.centerx)
         self.rect_y = float(self.rect.centery)
+        self.ticks = 0
+        self.speed = 0
         self.next_turn = 0
         self.turn = ""
 
-
     def draw_enemy(self):
         self.screen.blit(self.image, self.rect)
-
 
     def update(self, delta_ms, blocks, bangs, bullets,
                screen, all_objects, enemies):
         """Перемещение врагов"""
         self.speed = 125 * delta_ms / 1000
-        ticks = pygame.time.get_ticks()
-        ticks_of_next_turn = ticks - self.next_turn
-        if ticks > self.next_turn:
+        self.ticks = pygame.time.get_ticks()
+        ticks_of_next_turn = self.ticks - self.next_turn
+        if self.ticks > self.next_turn:
             if ticks_of_next_turn > 1000:
-                self.next_turn = ticks - 1000
+                self.next_turn = self.ticks - 1000
             self.turn = rd.choice(("Up", "Down", "Left", "Right"))
             self.next_turn += 1000
 
@@ -56,36 +54,32 @@ class Enemy(pygame.sprite.Sprite):
             if self.rect.right < self.screen_rect.right:
                 self.rect.x += self.speed
             else:
-                self.next_turn = ticks
+                self.next_turn = self.ticks
         if self.turn == "Down":
             self.image = down_e
             if self.rect.bottom < self.screen_rect.bottom:
                 self.rect.y += self.speed
             else:
-                self.next_turn = ticks
+                self.next_turn = self.ticks
         elif self.turn == "Left":
             self.image = left_e
             if self.rect.left > self.screen_rect.left:
                 self.rect.x -= self.speed
             else:
-                self.next_turn = ticks
+                self.next_turn = self.ticks
         elif self.turn == "Up":
             self.image = up_e
             if self.rect.top > self.screen_rect.top:
                 self.rect.y -= self.speed
             else:
-                self.next_turn = ticks
+                self.next_turn = self.ticks
 
         for block in blocks:
             if block != self and self.rect.colliderect(block.rect) \
                     and self.rect.colliderect(self.rect):
                 self.rect.topleft = oldX, oldY
-                self.next_turn = ticks
+                self.next_turn = self.ticks
         for enemy in enemies:
             if enemy != self and self.rect.colliderect(enemy.rect):
                 self.rect.topleft = oldX, oldY
-                self.next_turn = ticks
-        # for bullet in bullets:
-        #     if bullet.rect.colliderect(self.rect):
-        #         new_bang1 = Bang(screen, all_objects, bullet.rect.centerx, bullet.rect.centery)
-        #         bangs.add(new_bang1)
+                self.next_turn = self.ticks

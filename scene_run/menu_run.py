@@ -1,19 +1,16 @@
 import pygame
-from constants import WEIGHT, HEIGHT, FPS, BLACK
+from constants import FPS
 from scene_run import scene_manager
 from menu import Button
 
+
 main_menu_image = pygame.image.load('images/Menu.jpg')
+bg_img = pygame.transform.scale(main_menu_image, (1600, 900))
 
-aa = pygame.transform.scale(main_menu_image, (1600, 900))
 
-def run(screen, clock):
+def run_m(screen, clock):
     scene_manager.running = True
 
-    # menu = Menu()
-    # menu.append_option('Начать игру!', lambda: scene_manager.change_scene(scene_manager.game))
-    # menu.append_option('Параметры', lambda: print('hello world!'))
-    # menu.append_option('Выход', quit)
     button = Button(220, 50)
 
     while scene_manager.running:
@@ -23,11 +20,12 @@ def run(screen, clock):
         for event in pygame.event.get():
             # Проверка на закрытие окна
             if event.type == pygame.QUIT:
-                running = False
+                quit()
+                scene_manager.running = False
 
         # Визуализация, редеринг (сборка)
         # screen.fill(BLACK)
-        screen.blit(aa, (0, 0))
+        screen.blit(bg_img, (0, 0))
         button.draw(680, 400, 'Начать игру ', lambda: scene_manager.change_scene(scene_manager.game))
         button.draw(680, 460, " Параметры")
         button.draw(680, 520, '   Выход', quit)
@@ -38,4 +36,5 @@ def run(screen, clock):
         scene_manager.next_scene(screen, clock)
 
 
-scene_manager.scene_dict[scene_manager.menu] = run
+scene_manager.scene_dict[scene_manager.menu] = run_m
+print(f'{scene_manager.scene_dict} menushka')

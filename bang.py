@@ -10,6 +10,7 @@ bull_bng_3 = pygame.transform.scale(exp3, (60, 60))
 
 images_bangs = [bull_bng_1, bull_bng_2, bull_bng_3]
 
+
 class Bang(pygame.sprite.Sprite):
     def __init__(self, screen, pos_x, pos_y):
         super(Bang, self).__init__()

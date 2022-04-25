@@ -43,41 +43,28 @@ class Bullet(pygame.sprite.Sprite):
                bangs, enemies, blocks):
         """Перемещение пули"""
         self.speed = 350 * delta_ms / 1000
-        #Пуля летит вниз
-        if self.btDown == True:
+        # Пуля летит вниз
+        if self.btDown:
             self.image = DownBull
             self.y += self.speed
-            # if self.rect.bottom > self.screen_rect.bottom:
-            #     self.kill()
-            #     pygame.mixer.Sound.play(self.sound_exp)
         # Пуля летит вверх
-        elif self.btUp == True:
+        elif self.btUp:
             self.image = UpBull
             self.y -= self.speed
-            # if self.rect.top <= self.screen_rect.top:
-            #     self.kill()
-            #     pygame.mixer.Sound.play(self.sound_exp)
         # Пуля летит вправо
-        elif self.btRight == True:
+        elif self.btRight:
             self.image = RightBull
             self.x += self.speed
-            # if self.rect.right > self.screen_rect.right:
-            #     self.kill()
-            #     pygame.mixer.Sound.play(self.sound_exp)
         # Пуля летит влево
-        elif self.btLeft == True:
+        elif self.btLeft:
             self.image = LeftBull
             self.x -= self.speed
-            # if self.rect.left < self.screen_rect.left:
-            #     self.kill()
-            #     pygame.mixer.Sound.play(self.sound_exp)
 
         for block in blocks:
             if self.rect.colliderect(block.rect):
                 self.kill()
                 block.kill()
                 new_bang1 = Bang(screen, self.rect.centerx, self.rect.centery)
-                print(new_bang1)
                 bangs.add(new_bang1)
                 break
 
@@ -85,8 +72,8 @@ class Bullet(pygame.sprite.Sprite):
             if self.rect.colliderect(enemy.rect):
                 self.kill()
                 enemy.kill()
+                enemies.remove(enemy)
                 new_bang2 = Bang(screen, self.rect.centerx, self.rect.centery)
-                print(new_bang2)
                 bangs.add(new_bang2)
                 break
 
@@ -99,6 +86,5 @@ class Bullet(pygame.sprite.Sprite):
             bangs.add(new_bang)
             self.kill()
 
-
         self.rect.y = self.y
-        self.rect.x = self.x # Из-за отрисовки по х, расположение пули сдвигается
+        self.rect.x = self.x  # Из-за отрисовки по х, расположение пули сдвигается

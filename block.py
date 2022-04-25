@@ -1,6 +1,7 @@
 import pygame
 from constants import BLOCK_SIZE
 
+
 class Block(pygame.sprite.Sprite):
     def __init__(self, screen, all_objects, pos_x, pos_y):
         super(Block, self).__init__()
@@ -22,5 +23,3 @@ class Block(pygame.sprite.Sprite):
 
     def damage(self):
         pass
-
-

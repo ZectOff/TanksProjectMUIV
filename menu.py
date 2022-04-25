@@ -64,7 +64,6 @@ class Button:
                 # pygame.mixer.Sound.play(btn_swap)
                 # pygame.mixer.pause()
 
-
                 if click[0] == 1:
                     pygame.mixer.Sound.play(btn_pressed)
 
@@ -75,28 +74,3 @@ class Button:
             pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
 
         print_text(message, x + 10, y + 10)
-
-
-# доделать изменение жирность при наводки мышки на текст , так же доделать
-# функцию кнопки и реализовать меню до конца
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
