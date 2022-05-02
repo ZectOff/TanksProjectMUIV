@@ -160,7 +160,7 @@ def update_enemies(enemies, delta_ms, tank, stats,
         print(f'Вы выиграли, победив всех врагов! Заработано {stats.score} очков.')
         pygame.mixer.Sound.play(win_sound)
         time.sleep(2)
-        sys.exit()
+        scene_manager.change_scene(scene_manager.menu)
     for enemy in enemies:
         if enemy.rect.colliderect(tank.rect):
             enemy.kill()

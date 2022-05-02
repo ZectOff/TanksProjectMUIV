@@ -38,6 +38,8 @@ def run_g(screen, clock):
                                       enemies, blocks, bangs)
         main_pmoving.update_blocks(blocks, bullets)
         main_pmoving.update_bangs(bangs)
+    if scene_manager.next_scene:
+        scene_manager.next_scene(screen, clock)
 
 
 scene_manager.scene_dict[scene_manager.game] = run_g

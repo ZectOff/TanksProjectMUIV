@@ -27,7 +27,7 @@ class Enemy(pygame.sprite.Sprite):
         self.py = pos_y
         self.rect_x = float(self.rect.centerx)
         self.rect_y = float(self.rect.centery)
-        self.ticks = 0
+        self.ticks = 0  # Переменные для движения
         self.speed = 0
         self.next_turn = 0
         self.turn = ""
@@ -47,7 +47,7 @@ class Enemy(pygame.sprite.Sprite):
             self.turn = rd.choice(("Up", "Down", "Left", "Right"))
             self.next_turn += 1000
 
-        oldX, oldY = self.rect.topleft
+        oldx, oldy = self.rect.topleft
 
         if self.turn == "Right":
             self.image = right_e
@@ -77,9 +77,10 @@ class Enemy(pygame.sprite.Sprite):
         for block in blocks:
             if block != self and self.rect.colliderect(block.rect) \
                     and self.rect.colliderect(self.rect):
-                self.rect.topleft = oldX, oldY
+                self.rect.topleft = oldx, oldy
                 self.next_turn = self.ticks
+
         for enemy in enemies:
             if enemy != self and self.rect.colliderect(enemy.rect):
-                self.rect.topleft = oldX, oldY
+                self.rect.topleft = oldx, oldy
                 self.next_turn = self.ticks

@@ -9,7 +9,7 @@ exp3 = pygame.image.load('Images/bull_exp_3.png')
 bull_bng_3 = pygame.transform.scale(exp3, (60, 60))
 
 images_bangs = [bull_bng_1, bull_bng_2, bull_bng_3]
-
+# Список взрывов (для анимации)
 
 class Bang(pygame.sprite.Sprite):
     def __init__(self, screen, pos_x, pos_y):
