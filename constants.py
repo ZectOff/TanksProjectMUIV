@@ -1,11 +1,12 @@
-WEIGHT = 1548  # Ширина игровго окна
-HEIGHT = 860  # Высота
+WEIGHT = 1520  # Ширина игрового экрана
+HEIGHT = 880  # Высота игрового экрана
 FPS = 60  # fps
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-BLOCK_SIZE = 86
-TANK_SIZE = 80
+BLOCK_SIZE = 80
+BULLET_SIZE = 26
+TANK_SIZE = 74
 HEART_SIZE = 30

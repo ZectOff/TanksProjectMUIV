@@ -2,13 +2,13 @@ import pygame
 from constants import TANK_SIZE, BLOCK_SIZE
 
 pygame.init()
-Right_t = pygame.image.load('Images/MainTank_Right.png')
+Right_t = pygame.image.load('Images/MainTank_Right.png').convert_alpha()
 goRight = pygame.transform.scale(Right_t, (TANK_SIZE, TANK_SIZE))
-Up_t = pygame.image.load('Images/MainTank_Up.png')
+Up_t = pygame.image.load('Images/MainTank_Up.png').convert_alpha()
 goUp = pygame.transform.scale(Up_t, (TANK_SIZE, TANK_SIZE))
-Left_t = pygame.image.load('Images/MainTank_Left.png')
+Left_t = pygame.image.load('Images/MainTank_Left.png').convert_alpha()
 goLeft = pygame.transform.scale(Left_t, (TANK_SIZE, TANK_SIZE))
-Down_t = pygame.image.load('Images/MainTank_Down.png')
+Down_t = pygame.image.load('Images/MainTank_Down.png').convert_alpha()
 goDown = pygame.transform.scale(Down_t, (TANK_SIZE, TANK_SIZE))
 
 
@@ -20,8 +20,7 @@ class MainTank(pygame.sprite.Sprite):
         self.screen = screen
         self.screen_rect = screen.get_rect()
         self.type = 'Tank'
-        self.image = pygame.image.load('Images/MainTank_Up.png')
-        self.image = pygame.transform.scale(self.image, (TANK_SIZE, TANK_SIZE))
+        self.image = goUp
         self.rect = self.image.get_rect()
         self.perm_rect = self.rect
         self.r_center_x = float(self.rect.centerx)  # Floating, для плавности движений
@@ -38,8 +37,10 @@ class MainTank(pygame.sprite.Sprite):
 
     def create_tank(self, pos_x, pos_y):
         """Размещение танка игрока"""
-        spawn = (BLOCK_SIZE * pos_x, BLOCK_SIZE * pos_y)
+        spawn = (BLOCK_SIZE * pos_x, BLOCK_SIZE * pos_y)  # Размещение через *.txt файл
+        print(spawn)
         self.rect = self.perm_rect.move(spawn)
+        print('Tank spawned')
 
     def update_tank(self, delta_ms, blocks):
         """Обновляем позицию танка"""

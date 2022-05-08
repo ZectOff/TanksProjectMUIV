@@ -61,8 +61,6 @@ class Button:
 
         if x < mouse[0] < x + self.width and  y < mouse[1] < y + self.height:
                 pygame.draw.rect(screen, self.active_clr, (x - 20, y, self.width + 40, self.height))
-                # pygame.mixer.Sound.play(btn_swap)
-                # pygame.mixer.pause()
 
                 if click[0] == 1:
                     pygame.mixer.Sound.play(btn_pressed)
@@ -70,7 +68,8 @@ class Button:
                     if action is not None:
                         action()
 
-        else: # курсор не на кнопке
+        else:  # курсор не на кнопке
             pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
 
         print_text(message, x + 10, y + 10)
+

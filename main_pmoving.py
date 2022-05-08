@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import random
+from constants import BLOCK_SIZE
 from bullet import Bullet
 from enemy import Enemy
 from block import Block
@@ -87,7 +88,7 @@ def events(screen, tank, bullets, all_objects):
 
 def update(bg_color, screen, tank, bullets,
            enemies, blocks, bangs, sc, hearts,
-           en_bullets):
+           en_bullets, base):
     """Обновление экрана игры - отрисовываем все объекты"""
     screen.fill(bg_color)
     for bullet in bullets.sprites():
@@ -95,6 +96,7 @@ def update(bg_color, screen, tank, bullets,
     for en_bull in en_bullets:
         en_bull.draw()
     tank.own_tank_draw()
+    base.draw()
     for enemy in enemies:
         enemy.draw_enemy()
     for block in blocks.sprites():
@@ -147,9 +149,14 @@ def update_bangs(bangs):
     bangs.update(bangs)
 
 
+def update_base(base):
+    """Обновление базы"""
+    base.update()
+
+
 def update_enemies(enemies, delta_ms, tank, stats,
                    screen, bullets, all_objects, blocks,
-                   bangs, hearts, en_bullets):
+                   bangs, hearts, en_bullets, base):
     """Обновление врагов"""
     cruths1 = Group()
     cruths1.add(tank)
@@ -166,21 +173,21 @@ def update_enemies(enemies, delta_ms, tank, stats,
             enemy.kill()
             if stats.tank_lifes == 1:
                 tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets)
+                         bullets, all_objects, blocks, hearts, en_bullets, base)
             elif stats.tank_lifes != 0:
                 print('Вы потеряли одну жизнь!')
                 tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets)
+                         bullets, all_objects, blocks, hearts, en_bullets, base)
     for en_bull in en_bullets:
         if en_bull.rect.colliderect(tank.rect):
             en_bull.kill()
             if stats.tank_lifes == 1:
                 tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets)
+                         bullets, all_objects, blocks, hearts, en_bullets, base)
             elif stats.tank_lifes != 0:
                 print('Вы потеряли одну жизнь! (Вражеский снаряд убил вас!)')
                 tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets)
+                         bullets, all_objects, blocks, hearts, en_bullets, base)
 
 
 def en_bullet_update(screen, all_objects, en_bullets, delta_ms,
@@ -217,7 +224,7 @@ def en_bullet_update(screen, all_objects, en_bullets, delta_ms,
 
 
 def tank_die(stats, screen, tank, enemies, bullets,
-             all_objects, blocks, hearts, en_bullets):
+             all_objects, blocks, hearts, en_bullets, base):
     """Столкновение врагов с игроком"""
     stats.tank_lifes -= 1
     pygame.mixer.Sound.play(tank_died)
@@ -234,25 +241,10 @@ def tank_die(stats, screen, tank, enemies, bullets,
         enemies.clear()
         hearts.empty()
         tank.kill()
-        draw_level(screen, blocks, all_objects, enemies, tank)
+        base.kill()
+        draw_level(screen, blocks, all_objects, enemies, tank, base)
         hearts_update(screen, stats, hearts)
         time.sleep(0.6)
-        tank.create_tank(8, 7)
-
-
-def create_enemies(screen, enemies, all_objects):
-    """Создание нескольких врагов"""
-    x = 150
-    y = 200
-    for e_num in range(3):
-        if len(enemies) < 1:
-            x = 150
-            enemy = Enemy(screen, all_objects, x, y)
-            enemies.append(enemy)
-        else:
-            x += 350
-            enemy = Enemy(screen, all_objects, x, y)
-            enemies.append(enemy)
 
 
 def load_level():
@@ -265,17 +257,38 @@ def load_level():
     return level_map
 
 
+def create_obstacle_block(screen, all_objects, blocks,
+                          pos_x, pos_y):
+    """Создание стены состоящей из 4 блоков"""
+    shape = [  # Зададим форму для нашей стены
+        'xx',
+        'xx'
+    ]
+    for row_index, row in enumerate(shape):  # Проверим весь список shape и расставим блоки там где есть "х"
+        for col_index, col in enumerate(row):
+            if col == 'x':
+                x = pos_x + (col_index * (BLOCK_SIZE / 2))
+                y = pos_y + (row_index * (BLOCK_SIZE / 2))
+                block = Block(screen, all_objects, x, y)
+                blocks.add(block)
+
+
 def draw_level(screen, blocks, all_objects,
-               enemies, tank):
+               enemies, tank, base):
     """Отрисовка карты уровня"""
     level_map = load_level()
     for y in range(len(level_map)):
         for x in range(len(level_map[y])):
             if level_map[y][x] == '#':
-                block = Block(screen, all_objects, x, y)
-                blocks.add(block)
+                nx = x * BLOCK_SIZE
+                ny = y * BLOCK_SIZE
+                create_obstacle_block(screen, all_objects, blocks, nx, ny)
             elif level_map[y][x] == 'E':
                 enemy = Enemy(screen, all_objects, x, y)
                 enemies.append(enemy)
             elif level_map[y][x] == '@':
                 tank.create_tank(x, y)
+            elif level_map[y][x] == 'B':
+                for objects in all_objects:
+                    if objects.type == "Base":
+                        base.create_base(x, y)

@@ -27,8 +27,8 @@ def run_m(screen, clock):
         # screen.fill(BLACK)
         screen.blit(bg_img, (0, 0))
         button.draw(680, 400, 'Начать игру ', lambda: scene_manager.change_scene(scene_manager.game))
-        button.draw(680, 460, " Параметры")
-        button.draw(680, 520, '   Выход', quit)
+        # button.draw(680, 460, " Параметры")
+        button.draw(680, 460, '   Выход', quit)
         # menu.draw(screen, WEIGHT//2 - 100, HEIGHT//2, 75)
         # Flip, после отрисовки всего переворачиваем экран
         pygame.display.flip()

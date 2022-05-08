@@ -1,15 +1,16 @@
 import pygame
 from bang import Bang
+from constants import BULLET_SIZE
 
 pygame.init()
-b_Up = pygame.image.load('Images/Bullet_up.png')
-UpBull = pygame.transform.scale(b_Up, (30, 30))
-b_Right = pygame.image.load('Images/Bullet_right.png')
-RightBull = pygame.transform.scale(b_Right, (30, 30))
-b_Left = pygame.image.load('Images/Bullet_left.png')
-LeftBull = pygame.transform.scale(b_Left, (30, 30))
-b_Down = pygame.image.load('Images/Bullet_down.png')
-DownBull = pygame.transform.scale(b_Down, (30, 30))
+b_Up = pygame.image.load('Images/Bullet_up.png').convert_alpha()
+UpBull = pygame.transform.scale(b_Up, (BULLET_SIZE, BULLET_SIZE))
+b_Right = pygame.image.load('Images/Bullet_right.png').convert_alpha()
+RightBull = pygame.transform.scale(b_Right, (BULLET_SIZE, BULLET_SIZE))
+b_Left = pygame.image.load('Images/Bullet_left.png').convert_alpha()
+LeftBull = pygame.transform.scale(b_Left, (BULLET_SIZE, BULLET_SIZE))
+b_Down = pygame.image.load('Images/Bullet_down.png').convert_alpha()
+DownBull = pygame.transform.scale(b_Down, (BULLET_SIZE, BULLET_SIZE))
 bullet_explosion = pygame.mixer.Sound('Sounds/bullet_exp.mp3')
 
 
@@ -22,11 +23,10 @@ class Bullet(pygame.sprite.Sprite):
         self.screen = screen
         self.type = 'Bullet'
         self.screen_rect = screen.get_rect()
-        self.image = pygame.image.load('Images/Bullet_up.png')
-        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.image = UpBull
         self.rect = self.image.get_rect()
-        self.rect.centerx = tank.rect.centerx - 15
-        self.rect.centery = tank.rect.centery - 15
+        self.rect.centerx = tank.rect.centerx - (BULLET_SIZE / 2)
+        self.rect.centery = tank.rect.centery - (BULLET_SIZE / 2)
         self.y = float(self.rect.centery)
         self.x = float(self.rect.centerx)
         self.sound_exp = bullet_explosion

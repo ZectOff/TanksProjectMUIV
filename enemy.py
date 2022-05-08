@@ -3,26 +3,27 @@ import random as rd
 from constants import TANK_SIZE, BLOCK_SIZE
 
 pygame.init()
-E_Right = pygame.image.load('Images/EnemyTank_Right.png')
+# Загрузка изображений вражеских танков, с использованием конверт_альфа для снижения нагрузки
+E_Right = pygame.image.load('Images/EnemyTank_Right.png').convert_alpha()
 right_e = pygame.transform.scale(E_Right, (TANK_SIZE, TANK_SIZE))
-E_Left = pygame.image.load('Images/EnemyTank_Left.png')
+E_Left = pygame.image.load('Images/EnemyTank_Left.png').convert_alpha()
 left_e = pygame.transform.scale(E_Left, (TANK_SIZE, TANK_SIZE))
-E_Up = pygame.image.load('Images/EnemyTank_Up.png')
+E_Up = pygame.image.load('Images/EnemyTank_Up.png').convert_alpha()
 up_e = pygame.transform.scale(E_Up, (TANK_SIZE, TANK_SIZE))
-E_Down = pygame.image.load('Images/EnemyTank_Down.png')
+E_Down = pygame.image.load('Images/EnemyTank_Down.png').convert_alpha()
 down_e = pygame.transform.scale(E_Down, (TANK_SIZE, TANK_SIZE))
 
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, screen, all_objects, pos_x, pos_y):
+        """Инициализация вражеских танков"""
         super(Enemy, self).__init__()
         all_objects.add(self)
         self.screen = screen
         self.type = 'Enemy'
-        self.image = pygame.image.load("Images/EnemyTank_Up.png")
-        self.image = pygame.transform.scale(self.image, (TANK_SIZE, TANK_SIZE))
+        self.image = up_e
         self.screen_rect = screen.get_rect()
-        self.rect = self.image.get_rect().move((BLOCK_SIZE * pos_x), (BLOCK_SIZE * pos_y))
+        self.rect = self.image.get_rect().move((BLOCK_SIZE * pos_x), (BLOCK_SIZE * pos_y))  # Размещение через *.txt файл
         self.px = pos_x
         self.py = pos_y
         self.rect_x = float(self.rect.centerx)

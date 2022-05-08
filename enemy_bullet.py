@@ -1,15 +1,17 @@
 import pygame
 from bang import Bang
+from constants import BULLET_SIZE
 
 pygame.init()
-b_Up = pygame.image.load('Images/EnBull_up.png')
-UpEnBull = pygame.transform.scale(b_Up, (30, 30))
-b_Right = pygame.image.load('Images/EnBull_right.png')
-RightEnBull = pygame.transform.scale(b_Right, (30, 30))
-b_Left = pygame.image.load('Images/EnBull_left.png')
-LeftEnBull = pygame.transform.scale(b_Left, (30, 30))
-b_Down = pygame.image.load('Images/EnBull_down.png')
-DownEnBull = pygame.transform.scale(b_Down, (30, 30))
+# Загрузка изображений (и звуков) для вражеской пули, используя конверт_альфа для снижения нагрузки
+b_Up = pygame.image.load('Images/EnBull_up.png').convert_alpha()
+UpEnBull = pygame.transform.scale(b_Up, (BULLET_SIZE, BULLET_SIZE))
+b_Right = pygame.image.load('Images/EnBull_right.png').convert_alpha()
+RightEnBull = pygame.transform.scale(b_Right, (BULLET_SIZE, BULLET_SIZE))
+b_Left = pygame.image.load('Images/EnBull_left.png').convert_alpha()
+LeftEnBull = pygame.transform.scale(b_Left, (BULLET_SIZE, BULLET_SIZE))
+b_Down = pygame.image.load('Images/EnBull_down.png').convert_alpha()
+DownEnBull = pygame.transform.scale(b_Down, (BULLET_SIZE, BULLET_SIZE))
 bullet_explosion = pygame.mixer.Sound('Sounds/bullet_exp.mp3')
 
 
@@ -19,15 +21,13 @@ class EnemyBullet(pygame.sprite.Sprite):
         all_objects.add(self)
         self.screen = screen
         self.screen_rect = self.screen.get_rect()
-        self.image = pygame.image.load("Images/EnBull_up.png")
-        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.type = 'EnBull'
+        self.image = UpEnBull
         self.rect = self.image.get_rect()
-        self.rect.centerx = enemy.rect.centerx - 15
-        self.rect.centery = enemy.rect.centery - 15
-        # print(f"{enemy.rect} - Танк для пули")
+        self.rect.centerx = enemy.rect.centerx - (BULLET_SIZE / 2)
+        self.rect.centery = enemy.rect.centery - (BULLET_SIZE / 2)
         self.y = float(self.rect.centery)
         self.x = float(self.rect.centerx)
-        # print(f"{self.rect} - Вражеская пуля (должна быть на вражеском танке)")
         self.sound_exp = bullet_explosion
         self.btUp = False
         self.btRight = False
@@ -36,9 +36,9 @@ class EnemyBullet(pygame.sprite.Sprite):
 
     def update(self, delta_ms, blocks, bangs, screen):
         """Перемещение пули врагов"""
-        self.speed = 350 * delta_ms / 1000
+        self.speed = 350 * delta_ms / 1000  # Скорость от фпс
 
-        if self.btDown:
+        if self.btDown:  # Пуля летит вниз
             self.image = DownEnBull
             self.y += self.speed
         # Пуля летит вверх
