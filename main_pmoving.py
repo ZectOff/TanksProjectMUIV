@@ -6,7 +6,6 @@ from constants import BLOCK_SIZE
 from bullet import Bullet
 from enemy import Enemy
 from block import Block
-from pygame.sprite import Group
 from hearts import Hearts
 from enemy_bullet import EnemyBullet
 from scene_run import scene_manager
@@ -20,8 +19,8 @@ win_sound = pygame.mixer.Sound('Sounds/win_game.mp3')
 lose_sound = pygame.mixer.Sound('Sounds/lose_game.mp3')
 
 
-def events(screen, tank, bullets, all_objects):
-    """Обработка события"""
+def events(screen, clock, tank, bullets, all_objects):
+    """Обработка событий"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -71,6 +70,9 @@ def events(screen, tank, bullets, all_objects):
 
                     bullets.add(new_bullet)
 
+            elif event.key == pygame.K_ESCAPE:  # Ставим игру на паузу
+                pause(screen, clock)
+
         elif event.type == pygame.KEYUP:  # Если кнопка отжата (неактивна)
             # Вправо
             if event.key == pygame.K_d:
@@ -109,6 +111,74 @@ def update(bg_color, screen, tank, bullets,
     pygame.display.flip()
 
 
+def print_txt(screen, msg, x, y, fnt_clr=(255, 255, 255), fnt_size=35,
+              fnt_type='Images/Game_font.ttf'):
+    fnt_type = pygame.font.Font(fnt_type, fnt_size)
+    txt = fnt_type.render(msg, True, fnt_clr)
+    screen.blit(txt, (x, y))
+
+
+def pause(screen, clock):
+    fx = 220
+    fy = 410
+
+    paused = True
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        print_txt(screen, 'Пауза. Нажминете <Enter> чтобы продолжить.', fx, fy)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RETURN]:
+            paused = False
+
+        pygame.display.update()
+        clock.tick(15)
+
+
+def game_over(screen, clock, en_bullets, bullets, bangs,
+              blocks, enemies, hearts, tank, base):
+    gx = 530
+    gy = 800
+    pygame.mixer.Sound.play(lose_sound)
+    time.sleep(2)
+    en_bullets.empty()
+    bullets.empty()
+    blocks.empty()
+    bangs.empty()
+    enemies.clear()
+    hearts.empty()
+    tank.kill()
+    base.kill()
+
+    g_over = True
+    while g_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        screen.fill('black')
+        print_txt(screen, 'Game Over', gx, gy, (133, 18, 15), 75)
+        if gy == 360:
+            time.sleep(3)
+            g_over = False
+            scene_manager.change_scene(scene_manager.menu)
+        else:
+            gy -= 5
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RETURN]:
+            g_over = False
+            scene_manager.change_scene(scene_manager.menu)
+
+        pygame.display.update()
+        clock.tick(60)
+
+
 def hearts_update(screen, stats, hearts):
     """Обновляем сердечки танка"""
     hearts.update(stats)
@@ -121,10 +191,10 @@ def hearts_update(screen, stats, hearts):
 
 
 def bullets_update(screen, bullets, enemies, stats,
-                   delta_ms, all_objects, bangs, blocks, sc):
+                   delta_ms, all_objects, bangs, blocks, sc, base):
     """Обновление пули (для танка игрока)"""
     bullets.update(delta_ms, screen, all_objects, bangs,
-                   enemies, blocks)
+                   enemies, blocks, base)
     for enemy in enemies:
         for bullet in bullets:
             if bullet.rect.colliderect(enemy.rect):
@@ -149,21 +219,30 @@ def update_bangs(bangs):
     bangs.update(bangs)
 
 
-def update_base(base):
+def update_base(screen, clock, en_bullets, bangs, bullets,
+                blocks, enemies, hearts, tank, stats, base):
     """Обновление базы"""
-    base.update()
+    for bullet in bullets:
+        if bullet.rect.colliderect(base.rect):
+            stats.base_lifes -= 1
+    if stats.base_lifes == 0:
+        base.ok = False
+        stats.tank_lifes = 0
+        print('Ваша база была разрушена! Вы проиграли!')
+        game_over(screen, clock, en_bullets, bullets, bangs,
+                  blocks, enemies, hearts, tank, base)
+    base.update()  # Доделать логику - смена карткинки на флаг и нормальный гейм овер
+    base.draw()
 
 
 def update_enemies(enemies, delta_ms, tank, stats,
                    screen, bullets, all_objects, blocks,
-                   bangs, hearts, en_bullets, base):
+                   bangs, hearts, en_bullets, base, clock):
     """Обновление врагов"""
-    cruths1 = Group()
-    cruths1.add(tank)
     for enemy in enemies:
         enemy.update(delta_ms, blocks, bangs, bullets,
                      screen, all_objects, enemies)
-    if len(enemies) == 0:
+    if len(enemies) == 0 and stats.tank_lifes >= 1 and stats.base_lifes >= 1:
         print(f'Вы выиграли, победив всех врагов! Заработано {stats.score} очков.')
         pygame.mixer.Sound.play(win_sound)
         time.sleep(2)
@@ -172,22 +251,26 @@ def update_enemies(enemies, delta_ms, tank, stats,
         if enemy.rect.colliderect(tank.rect):
             enemy.kill()
             if stats.tank_lifes == 1:
-                tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets, base)
+                tank_die(stats, screen, tank, enemies, bullets,
+                         all_objects, blocks, hearts, en_bullets,
+                         base, clock, bangs)
             elif stats.tank_lifes != 0:
                 print('Вы потеряли одну жизнь!')
-                tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets, base)
+                tank_die(stats, screen, tank, enemies, bullets,
+                         all_objects, blocks, hearts, en_bullets,
+                         base, clock, bangs)
     for en_bull in en_bullets:
         if en_bull.rect.colliderect(tank.rect):
             en_bull.kill()
             if stats.tank_lifes == 1:
-                tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets, base)
+                tank_die(stats, screen, tank, enemies, bullets,
+                         all_objects, blocks, hearts, en_bullets,
+                         base, clock, bangs)
             elif stats.tank_lifes != 0:
                 print('Вы потеряли одну жизнь! (Вражеский снаряд убил вас!)')
-                tank_die(stats, screen, tank, enemies,
-                         bullets, all_objects, blocks, hearts, en_bullets, base)
+                tank_die(stats, screen, tank, enemies, bullets,
+                         all_objects, blocks, hearts, en_bullets,
+                         base, clock, bangs)
 
 
 def en_bullet_update(screen, all_objects, en_bullets, delta_ms,
@@ -224,15 +307,15 @@ def en_bullet_update(screen, all_objects, en_bullets, delta_ms,
 
 
 def tank_die(stats, screen, tank, enemies, bullets,
-             all_objects, blocks, hearts, en_bullets, base):
+             all_objects, blocks, hearts, en_bullets,
+             base, clock, bangs):
     """Столкновение врагов с игроком"""
     stats.tank_lifes -= 1
     pygame.mixer.Sound.play(tank_died)
-    if stats.tank_lifes == 0:
+    if stats.tank_lifes <= 0:
         print('Вы проиграли, потеряв все жизни!')
-        pygame.mixer.Sound.play(lose_sound)
-        time.sleep(2)  # Попытка при проигрыше вернутся в меню (не работает).
-        scene_manager.change_scene(scene_manager.menu)
+        game_over(screen, clock, en_bullets, bullets, bangs,
+                  blocks, enemies, hearts, tank, base)
     else:
         print(str(stats.tank_lifes) + " Жизней осталось.")
         en_bullets.empty()

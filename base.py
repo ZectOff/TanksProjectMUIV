@@ -1,5 +1,11 @@
 import pygame
-from constants import BLOCK_SIZE, TANK_SIZE
+from constants import BLOCK_SIZE, BASE_SIZE
+
+
+base = pygame.image.load('Images/base.png').convert_alpha()
+base_img = pygame.transform.scale(base, (BASE_SIZE, BASE_SIZE))
+surr = pygame.image.load('Images/surrend_flag.png').convert_alpha()
+surr_flag = pygame.transform.scale(surr, (BASE_SIZE, BASE_SIZE))
 
 
 class Base(pygame.sprite.Sprite):
@@ -8,18 +14,18 @@ class Base(pygame.sprite.Sprite):
         all_objects.add(self)
         self.screen = screen
         self.type = "Base"
-        self.image = pygame.image.load('Images/base.png').convert_alpha()  # Пока что тестовая картинка
-        self.image = pygame.transform.scale(self.image, (TANK_SIZE, TANK_SIZE))
+        self.image = base_img
         self.rect = self.image.get_rect()
+        self.ok = True
 
     def update(self):
-        pass
+        if not self.ok:
+            self.image = surr_flag
 
     def draw(self):
         self.screen.blit(self.image, self.rect)
 
     def create_base(self, pos_x, pos_y):
-        """Размещение танка игрока"""
-        spawn = (BLOCK_SIZE * pos_x, BLOCK_SIZE * pos_y)  # Размещение через *.txt файл
-        print('Base spawned')
+        """Размещение базы игрока"""
+        spawn = ((BLOCK_SIZE * pos_x) + 4, (BLOCK_SIZE * pos_y) + 4)  # Размещение через *.txt файл
         self.rect = self.rect.move(spawn)
