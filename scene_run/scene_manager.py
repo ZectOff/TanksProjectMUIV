@@ -1,7 +1,7 @@
 scene_dict = {}
 game = "GAME"
 menu = "MENU"
-settings = "SET"
+settings = "SETTINGS"
 
 next_scene = None
 running = True

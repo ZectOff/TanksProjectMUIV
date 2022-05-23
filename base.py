@@ -22,10 +22,11 @@ class Base(pygame.sprite.Sprite):
         if not self.ok:
             self.image = surr_flag
 
-    def draw(self):
+    def base_draw(self):
         self.screen.blit(self.image, self.rect)
 
     def create_base(self, pos_x, pos_y):
         """Размещение базы игрока"""
+        print(pos_x, pos_y)
         spawn = ((BLOCK_SIZE * pos_x) + 4, (BLOCK_SIZE * pos_y) + 4)  # Размещение через *.txt файл
         self.rect = self.rect.move(spawn)

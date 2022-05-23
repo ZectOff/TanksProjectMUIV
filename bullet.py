@@ -40,7 +40,7 @@ class Bullet(pygame.sprite.Sprite):
         self.screen.blit(self.image, (self.x, self.y))
 
     def update(self, delta_ms, screen, all_objects,
-               bangs, enemies, blocks, base):
+               bangs, enemies, blocks, base, stats):
         """Перемещение пули"""
         speed = 350 * delta_ms / 1000
         # Пуля летит вниз
@@ -87,12 +87,12 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
         if self.rect.colliderect(base.rect):
-            base.kill()
             print("База умерла твоя все конечик")
             pygame.mixer.Sound.play(self.sound_exp)  # Врезалась в базу - взорвалась
             new_bang4 = Bang(screen, self.rect.centerx, self.rect.centery)
             bangs.add(new_bang4)
             self.kill()
+            stats.base_lifes -= 1
 
         self.rect.y = self.y
         self.rect.x = self.x  # Из-за отрисовки по х, расположение пули сдвигается

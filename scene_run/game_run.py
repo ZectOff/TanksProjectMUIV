@@ -11,6 +11,8 @@ def run_g(screen, clock):
     scene_manager.running = True
 
     bg_color = (25, 25, 25)
+    lvl_1 = 'level_1_map'
+    # lvl_2 = 'level_2_map'
     all_objects = Group()
     tank = MainTank(screen, all_objects)
     base = Base(screen, all_objects)
@@ -21,7 +23,7 @@ def run_g(screen, clock):
     en_bullets = Group()
     stats = GameStats()
     hearts = Group()
-    main_pmoving.draw_level(screen, blocks, all_objects, enemies, tank, base)
+    main_pmoving.draw_level(screen, blocks, all_objects, enemies, tank, base, lvl_1)
     sc = Scores(screen, stats)
     main_pmoving.hearts_update(screen, stats, hearts)
 
@@ -31,7 +33,8 @@ def run_g(screen, clock):
         main_pmoving.update(bg_color, screen, tank, bullets, enemies,
                             blocks, bangs, sc, hearts, en_bullets, base)
         tank.update_tank(delta_ms, blocks, base)
-        main_pmoving.update_base(screen, clock, en_bullets, bangs, bullets,
+        base.update()
+        main_pmoving.update_base(screen, clock, all_objects, en_bullets, bangs, bullets,
                                  blocks, enemies, hearts, tank, stats, base)
         main_pmoving.bullets_update(screen, bullets, enemies, stats, delta_ms,
                                     all_objects, bangs, blocks, sc, base)

@@ -107,6 +107,7 @@ class MainTank(pygame.sprite.Sprite):
         self.mtop = False
         self.mbottom = False
         self.LastMove = "Up"
+        self.shotTimer = 0
         self.animCount = 0
 
     def own_tank_draw(self):
@@ -122,6 +123,9 @@ class MainTank(pygame.sprite.Sprite):
         """Обновляем позицию танка"""
         speed = 125 * delta_ms / 1000
         oldx, oldy = self.rect.topleft
+
+        if self.shotTimer > 0:
+            self.shotTimer -= 1
 
         if self.animCount >= 60:
             self.animCount = 0
