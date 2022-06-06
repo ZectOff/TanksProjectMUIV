@@ -58,17 +58,23 @@ class Enemy(pygame.sprite.Sprite):
         self.type = 'Enemy'
         self.image = ET_up1
         self.screen_rect = screen.get_rect()
-        self.rect = self.image.get_rect().move((BLOCK_SIZE * pos_x), (BLOCK_SIZE * pos_y))  # Размещение *.txt файл
+        self.rect = self.image.get_rect()
+        self.perm_rect = self.rect
         self.px = pos_x
         self.py = pos_y
         self.rect_x = float(self.rect.centerx)
         self.rect_y = float(self.rect.centery)
         self.ticks = 0  # Переменные для движения
         self.speed = 0
-        self.shotTimer = 0
+        self.shotTimer = rd.randint(0, 120)
         self.animCount = 0
         self.next_turn = 0
         self.turn = "Up"
+
+    def create_enemy(self):
+        self.spawn = (BLOCK_SIZE * self.px, BLOCK_SIZE * self.py)
+        self.rect = self.perm_rect.move(self.spawn)
+        print(f'{self.rect} полученные координаты')
 
     def draw_enemy(self):
         self.screen.blit(self.image, self.rect)

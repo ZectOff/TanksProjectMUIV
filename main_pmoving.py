@@ -20,9 +20,10 @@ lose_sound = pygame.mixer.Sound('Sounds/lose_game.mp3')
 
 lvl_1 = 'level_1_map'
 lvl_2 = 'level_2_map'
+lvl_now = None
 
 
-def events(screen, clock, tank, bullets, all_objects):
+def events(screen, clock, tank, bullets, all_objects, enemies):
     """Обработка событий"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -77,6 +78,9 @@ def events(screen, clock, tank, bullets, all_objects):
 
             elif event.key == pygame.K_ESCAPE:  # Ставим игру на паузу
                 pause(screen, clock)
+
+            elif event.key == pygame.K_j:
+                enemies.clear()
 
         elif event.type == pygame.KEYUP:  # Если кнопка отжата (неактивна)
             # Вправо
@@ -146,7 +150,6 @@ def pause(screen, clock):
 
 def game_over(screen, clock, all_objects, en_bullets, bullets,
               bangs, blocks, enemies, hearts, tank, base, stats):
-    gx = 530
     gy = 800
     pygame.mixer.Sound.play(lose_sound)
     time.sleep(2)
@@ -172,11 +175,16 @@ def game_over(screen, clock, all_objects, en_bullets, bullets,
         screen.fill('black')
         if not base.ok:
             print_txt(screen, 'Ваша база была разрушена, вы проиграли!', 140, 200, (255, 255, 255), 45)
-
+            print_txt(screen, 'Game Over', 530, gy, (133, 18, 15), 75)
         elif stats.tank_lifes == 0:
             print_txt(screen, 'Вы потеряли все жизни!', 395, 200, (255, 255, 255), 45)
+            print_txt(screen, 'Game Over', 530, gy, (133, 18, 15), 75)
+        elif len(enemies) == 0 and lvl_now == 2:
+            print_txt(screen, f'Вы победили всех врагов! Ваши очки: {stats.score}', 150, 200, (255, 255, 255), 45)
+            print_txt(screen, 'You Win!', 565, gy, (40, 161, 38), 75)
+        else:
+            print_txt(screen, 'Game Over', 530, gy, (133, 18, 15), 75)
 
-        print_txt(screen, 'Game Over', gx, gy, (133, 18, 15), 75)
         if gy == 360:
             time.sleep(3)
             g_over = False
@@ -209,6 +217,11 @@ def bullets_update(screen, bullets, enemies, stats,
     """Обновление пули (для танка игрока)"""
     bullets.update(delta_ms, screen, all_objects, bangs,
                    enemies, blocks, base, stats)
+    for error in all_objects:
+        if error.type == "Enemy":
+            if error.rect.x >= 1521 or error.rect.y >= 881 or error.rect.x < 0 or error.rect.y < 0:
+                print(error.rect)
+                error.create_enemy()
     for enemy in enemies:
         for bullet in bullets:
             if bullet.rect.colliderect(enemy.rect):
@@ -254,26 +267,26 @@ def update_enemies(enemies, delta_ms, tank, stats,
                    screen, bullets, all_objects, blocks,
                    bangs, hearts, en_bullets, base, clock):
     """Обновление врагов"""
+    global lvl_now
     for enemy in enemies:
         enemy.update(delta_ms, blocks, bangs, bullets,
                      screen, all_objects, enemies)
-    if len(enemies) == 0 and stats.tank_lifes >= 1 and stats.base_lifes >= 1:
+    if len(enemies) == 0 and stats.tank_lifes >= 1 and stats.base_lifes >= 1 and lvl_now == 1:
         print(f'Вы выиграли, победив всех врагов! Заработано {stats.score} очков.')
         pygame.mixer.Sound.play(win_sound)
         en_bullets.empty()
         bullets.empty()
         blocks.empty()
-        enemies.clear()
         hearts.empty()
-        tank.kill()
-        for object1 in all_objects:
-            if object1.type == "Base":
-                all_objects.remove(object1)
-                base.kill()
         time.sleep(2)
         draw_level(screen, blocks, all_objects, enemies, tank,
                    base, lvl_2)
-        # scene_manager.change_scene(scene_manager.menu)
+        hearts_update(screen, stats, hearts)
+
+    if len(enemies) == 0 and stats.tank_lifes >= 1 and stats.base_lifes >= 1 and lvl_now == 2:
+        game_over(screen, clock, all_objects, en_bullets, bullets, bangs,
+                  blocks, enemies, hearts, tank, base, stats)
+
     for enemy in enemies:
         if enemy.rect.colliderect(tank.rect):
             enemy.kill()
@@ -337,6 +350,7 @@ def tank_die(stats, screen, tank, enemies, bullets,
              all_objects, blocks, hearts, en_bullets,
              base, clock, bangs):
     """Столкновение врагов с игроком"""
+    global lvl_now
     stats.tank_lifes -= 1
     pygame.mixer.Sound.play(tank_died)
     if stats.tank_lifes <= 0:
@@ -348,19 +362,16 @@ def tank_die(stats, screen, tank, enemies, bullets,
         en_bullets.empty()
         bullets.empty()
         bangs.empty()
-        # blocks.empty()
-        # enemies.clear()
         hearts.empty()
-        tank.kill()
-        for object1 in all_objects:
-            if object1.type == "Base":
-                all_objects.remove(object1)
-                base.kill()
         time.sleep(0.6)
-        tank.create_tank(9, 7)
-        # draw_level(screen, blocks, all_objects, enemies, tank, base,
-        #            lvl_1)
-        hearts_update(screen, stats, hearts)
+        if lvl_now == 1:
+            tank.create_tank(9, 7)
+            base.create_base(9, 9)
+        elif lvl_now == 2:
+            tank.create_tank(5, 9)
+            base.create_base(3, 10)
+
+    hearts_update(screen, stats, hearts)
 
 
 def load_level(lvl):
@@ -392,7 +403,12 @@ def create_obstacle_block(screen, all_objects, blocks,
 def draw_level(screen, blocks, all_objects,
                enemies, tank, base, level):
     """Отрисовка карты уровня"""
+    global lvl_now
     level_map = load_level(level)
+    if level == lvl_1:
+        lvl_now = 1
+    elif level == lvl_2:
+        lvl_now = 2
 
     for y in range(len(level_map)):
         for x in range(len(level_map[y])):
@@ -402,14 +418,10 @@ def draw_level(screen, blocks, all_objects,
                 create_obstacle_block(screen, all_objects, blocks, nx, ny)
             elif level_map[y][x] == 'E':
                 enemy = Enemy(screen, all_objects, x, y)
+                enemy.create_enemy()
+                print(f'{enemy.rect} - Данные врага после создания уровня')
                 enemies.append(enemy)
             elif level_map[y][x] == '@':
                 tank.create_tank(x, y)
-                print(f'Tank {x, y}')
             elif level_map[y][x] == 'B':
-                print('sss')
-                for object1 in all_objects:
-                    if object1.type == "Base":
-                        print(object1)
-                        base.create_base(x, y)
-                        print(x, y)
+                base.create_base(x, y)

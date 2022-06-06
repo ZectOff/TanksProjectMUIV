@@ -12,7 +12,6 @@ def run_g(screen, clock):
 
     bg_color = (25, 25, 25)
     lvl_1 = 'level_1_map'
-    # lvl_2 = 'level_2_map'
     all_objects = Group()
     tank = MainTank(screen, all_objects)
     base = Base(screen, all_objects)
@@ -29,7 +28,7 @@ def run_g(screen, clock):
 
     while scene_manager.running:
         delta_ms = clock.tick(60)
-        main_pmoving.events(screen, clock, tank, bullets, all_objects)
+        main_pmoving.events(screen, clock, tank, bullets, all_objects, enemies)
         main_pmoving.update(bg_color, screen, tank, bullets, enemies,
                             blocks, bangs, sc, hearts, en_bullets, base)
         tank.update_tank(delta_ms, blocks, base)
@@ -51,4 +50,3 @@ def run_g(screen, clock):
 
 
 scene_manager.scene_dict[scene_manager.game] = run_g
-print(f'{scene_manager.scene_dict} igra')

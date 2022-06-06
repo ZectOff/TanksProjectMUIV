@@ -37,4 +37,3 @@ def run_m(screen, clock):
 
 
 scene_manager.scene_dict[scene_manager.menu] = run_m
-print(f'{scene_manager.scene_dict} menushka')

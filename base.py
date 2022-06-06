@@ -16,6 +16,7 @@ class Base(pygame.sprite.Sprite):
         self.type = "Base"
         self.image = base_img
         self.rect = self.image.get_rect()
+        self.perm_rect = self.rect
         self.ok = True
 
     def update(self):
@@ -27,6 +28,5 @@ class Base(pygame.sprite.Sprite):
 
     def create_base(self, pos_x, pos_y):
         """Размещение базы игрока"""
-        print(pos_x, pos_y)
         spawn = ((BLOCK_SIZE * pos_x) + 4, (BLOCK_SIZE * pos_y) + 4)  # Размещение через *.txt файл
-        self.rect = self.rect.move(spawn)
+        self.rect = self.perm_rect.move(spawn)
